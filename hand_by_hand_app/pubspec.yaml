@@ -1,0 +1,28 @@
+name: hand_by_hand_app
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.2
+
+dependencies:
+  dio: ^5.7.0
+  email_validator: ^3.0.0
+  flutter:
+    sdk: flutter
+  flutter_secure_storage: ^9.2.2
+  flutter_svg: ^2.0.10+1
+  get_it: ^7.7.0
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - images/
