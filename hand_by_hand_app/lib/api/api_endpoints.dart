@@ -4,7 +4,7 @@ class ApiEndpoints {
   static String baseUrl = Config.baseUrl;
 
   //Endpoint
-  static String login = "$baseUrl/auth/token";
+  static String login = "$baseUrl/auth/login";
   static String register = "$baseUrl/auth/register";
   static String getMe = "$baseUrl/users/me";
 }
