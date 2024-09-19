@@ -2,10 +2,11 @@
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:hand_by_hand_app/api/dio_service.dart';
-import 'package:hand_by_hand_app/api/auth/auth_response.dart';
+import 'package:hand_by_hand_app/api/auth/auth_service.dart';
+import 'package:hand_by_hand_app/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/components/alert_message.dart';
 import 'package:hand_by_hand_app/pages/auth/register.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand_app/pages/feed.dart';
 
 class Login extends StatelessWidget {
@@ -21,31 +22,27 @@ class Login extends StatelessWidget {
       ),
       body: Container(
         padding: const EdgeInsets.all(35),
-        child: const SingleChildScrollView(
-          child: LoginForm(),
+        child: SingleChildScrollView(
+          child: BlocProvider(
+            create: (context) => AuthBloc(auth: AuthService()),
+            child: LoginForm(),
+          ),
         ),
       ),
     );
   }
 }
 
-class LoginForm extends StatefulWidget {
-  const LoginForm({
+class LoginForm extends StatelessWidget {
+  LoginForm({
     super.key,
   });
 
-  @override
-  State<LoginForm> createState() => _LoginFormState();
-}
-
-class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
 
   final TextEditingController _passwordController = TextEditingController();
-
-  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -54,31 +51,9 @@ class _LoginFormState extends State<LoginForm> {
         return;
       } else {
         _formKey.currentState!.save();
-
-        setState(() {
-          loading = true;
-        });
-
-        AuthResponse response = await DioService()
-            .login(_emailController.text, _passwordController.text);
-
-        if (context.mounted) {
-          if (response.status) {
-            await Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const Feed(),
-              ),
-              (Route<dynamic> route) => false,
-            );
-          } else {
-            AlertMessage.alert(
-                "แจ้งเตือน", response.message, context);
-          }
-          setState(() {
-            loading = false;
-          });
-        }
+        context
+            .read<AuthBloc>()
+            .add(LoginEvent(_emailController.text, _passwordController.text));
       }
     }
 
@@ -104,146 +79,231 @@ class _LoginFormState extends State<LoginForm> {
             const SizedBox(
               height: 60,
             ),
-            TextFormField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                  icon: const Icon(Icons.email_outlined),
-                  hintText: "abc@example.com",
-                  hintStyle: TextStyle(color: Colors.grey[500]),
-                  labelText: "อีเมล",
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Theme.of(context).primaryColor)),
-                  floatingLabelStyle:
-                      TextStyle(color: Theme.of(context).primaryColor)),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return "กรุณากรอกอีเมล";
-                }
-
-                if (!EmailValidator.validate(value)) {
-                  return "กรุณากรอกอีเมลให้ถูกต้อง";
-                }
-
-                return null;
-              },
-            ),
+            EmailInput(emailController: _emailController),
             const SizedBox(
               height: 20,
             ),
-            TextFormField(
-              controller: _passwordController,
-              keyboardType: TextInputType.visiblePassword,
-              obscureText: true,
-              decoration: InputDecoration(
-                  icon: const Icon(Icons.lock_outline),
-                  hintStyle: TextStyle(color: Colors.grey[500]),
-                  labelText: "รหัสผ่าน",
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Theme.of(context).primaryColor)),
-                  floatingLabelStyle:
-                      TextStyle(color: Theme.of(context).primaryColor)),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return "กรุณากรอกรหัสผ่าน";
-                }
-                return null;
-              },
-            ),
+            PasswordInput(passwordController: _passwordController),
             const SizedBox(
               height: 20,
             ),
-            Row(
-              children: [
-                Text(
-                  "ลืมรหัสผ่าน?",
-                  style: TextStyle(color: Theme.of(context).primaryColorDark),
-                ),
-                TextButton(
-                    onPressed: () {},
-                    style: const ButtonStyle(
-                      overlayColor: WidgetStatePropertyAll(
-                        Colors.transparent,
-                      ),
-                    ),
-                    child: Text(
-                      "รีเซ็ตรหัสผ่าน",
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ))
-              ],
-            ),
+            const ForgotPassword(),
             const SizedBox(
               height: 80,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  width: 130,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () => submit(),
-                    style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Colors.white),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        const Text("เข้าสู่ระบบ"),
-                        loading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                              )
-                            : const Icon(Icons.arrow_forward),
-                      ],
-                    ),
-                  ),
-                )
-              ],
+            LoginButton(
+              submit: submit(),
             ),
             const SizedBox(
               height: 90,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "ยังไม่มีบัญชีผู้ใช้?",
-                  style: TextStyle(color: Theme.of(context).primaryColorDark),
-                ),
-                TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const Register(),
-                          ));
-                    },
-                    style: const ButtonStyle(
-                      overlayColor: WidgetStatePropertyAll(
-                        Colors.transparent,
-                      ),
-                    ),
-                    child: Text(
-                      "สร้างบัญชี",
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ))
-              ],
-            ),
+            const CreateAccount(),
           ],
         ),
       ),
+    );
+  }
+}
+
+class CreateAccount extends StatelessWidget {
+  const CreateAccount({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "ยังไม่มีบัญชีผู้ใช้?",
+          style: TextStyle(color: Theme.of(context).primaryColorDark),
+        ),
+        TextButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const Register(),
+                  ));
+            },
+            style: const ButtonStyle(
+              overlayColor: WidgetStatePropertyAll(
+                Colors.transparent,
+              ),
+            ),
+            child: Text(
+              "สร้างบัญชี",
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold),
+            ))
+      ],
+    );
+  }
+}
+
+class LoginButton extends StatelessWidget {
+  const LoginButton({super.key, required this.submit});
+
+  final void submit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        SizedBox(
+          width: 130,
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () => submit,
+            style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                const Text("เข้าสู่ระบบ"),
+                SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        if (state is AuthLoading) {
+                          return const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          );
+                        }
+
+                        if (state is AuthSuccess) {
+                          WidgetsBinding.instance
+                              .addPostFrameCallback((_) async {
+                            await Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const Feed(),
+                              ),
+                              (Route<dynamic> route) => false,
+                            );
+                          });
+                        }
+
+                        if (state is AuthFailure) {
+                          AlertMessage.alert("แจ้งเตือน", state.error, context);
+                        }
+
+                        return const Icon(Icons.arrow_forward);
+                      },
+                    )),
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class ForgotPassword extends StatelessWidget {
+  const ForgotPassword({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          "ลืมรหัสผ่าน?",
+          style: TextStyle(color: Theme.of(context).primaryColorDark),
+        ),
+        TextButton(
+            onPressed: () {},
+            style: const ButtonStyle(
+              overlayColor: WidgetStatePropertyAll(
+                Colors.transparent,
+              ),
+            ),
+            child: Text(
+              "รีเซ็ตรหัสผ่าน",
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold),
+            ))
+      ],
+    );
+  }
+}
+
+class PasswordInput extends StatelessWidget {
+  const PasswordInput({
+    super.key,
+    required TextEditingController passwordController,
+  }) : _passwordController = passwordController;
+
+  final TextEditingController _passwordController;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: _passwordController,
+      keyboardType: TextInputType.visiblePassword,
+      obscureText: true,
+      decoration: InputDecoration(
+          icon: const Icon(Icons.lock_outline),
+          hintStyle: TextStyle(color: Colors.grey[500]),
+          labelText: "รหัสผ่าน",
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Theme.of(context).primaryColor)),
+          floatingLabelStyle: TextStyle(color: Theme.of(context).primaryColor)),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "กรุณากรอกรหัสผ่าน";
+        }
+        return null;
+      },
+    );
+  }
+}
+
+class EmailInput extends StatelessWidget {
+  const EmailInput({
+    super.key,
+    required TextEditingController emailController,
+  }) : _emailController = emailController;
+
+  final TextEditingController _emailController;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: _emailController,
+      decoration: InputDecoration(
+          icon: const Icon(Icons.email_outlined),
+          hintText: "abc@example.com",
+          hintStyle: TextStyle(color: Colors.grey[500]),
+          labelText: "อีเมล",
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Theme.of(context).primaryColor)),
+          floatingLabelStyle: TextStyle(color: Theme.of(context).primaryColor)),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "กรุณากรอกอีเมล";
+        }
+
+        if (!EmailValidator.validate(value)) {
+          return "กรุณากรอกอีเมลให้ถูกต้อง";
+        }
+
+        return null;
+      },
     );
   }
 }

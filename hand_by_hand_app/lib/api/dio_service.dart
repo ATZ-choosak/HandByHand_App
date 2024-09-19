@@ -2,11 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:hand_by_hand_app/api/api_endpoints.dart';
-import 'package:hand_by_hand_app/api/auth/auth_service.dart';
-import 'package:hand_by_hand_app/api/auth/auth_response.dart';
 import 'package:hand_by_hand_app/api/token_service.dart';
-import 'package:hand_by_hand_app/api/user/user_response.dart';
-import 'package:hand_by_hand_app/api/user/user_service.dart';
 
 class DioService {
   late Dio dio;
@@ -34,21 +30,5 @@ class DioService {
         handler.next(error);
       },
     ));
-  }
-
-  Future<AuthResponse> login(String username, String password) async {
-    return AuthService().login(username, password);
-  }
-
-  Future<AuthResponse> register(String email, String name, String password) async {
-    return AuthService().register(email, name, password);
-  }
-
-  Future<void> logout() async {
-    return AuthService().logout();
-  }
-
-  Future<UserResponse> getMe() async {
-    return UserService().getMe();
   }
 }

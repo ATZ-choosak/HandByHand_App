@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hand_by_hand_app/api/dio_service.dart';
+import 'package:hand_by_hand_app/api/auth/auth_service.dart';
 import 'package:hand_by_hand_app/api/user/user_service.dart';
 import 'package:hand_by_hand_app/pages/login_page.dart';
 
@@ -14,7 +14,7 @@ class _FeedState extends State<Feed> {
   @override
   Widget build(BuildContext context) {
     void logout() async {
-      await DioService().logout();
+      await AuthService().logout();
       if (context.mounted) {
         await Navigator.pushAndRemoveUntil(
           context,
@@ -36,7 +36,9 @@ class _FeedState extends State<Feed> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(snapshot.data!.name),
-                const SizedBox(height: 50,),
+                const SizedBox(
+                  height: 50,
+                ),
                 ElevatedButton(
                   onPressed: () => logout(),
                   child: const Text("ออกจากระบบ"),

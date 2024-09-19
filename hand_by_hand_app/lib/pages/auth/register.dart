@@ -1,10 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:hand_by_hand_app/api/auth/auth_response.dart';
-import 'package:hand_by_hand_app/api/dio_service.dart';
-import 'package:hand_by_hand_app/components/alert_message.dart';
 import 'package:hand_by_hand_app/pages/auth/login.dart';
-import 'package:hand_by_hand_app/pages/confirm_email.dart';
 
 class Register extends StatelessWidget {
   const Register({super.key});
@@ -49,7 +45,6 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-
     void submit() async {
       if (!_formKey.currentState!.validate()) {
         return;
@@ -59,30 +54,6 @@ class _RegisterFormState extends State<RegisterForm> {
         setState(() {
           loading = true;
         });
-
-        AuthResponse response = await DioService().register(
-            _emailController.text,
-            _nameController.text,
-            _passwordController.text);
-
-        if (context.mounted) {
-          if (response.status) {
-            
-            await Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (_) => ConfirmEmail(email: _emailController.text,),
-              ),
-              (Route<dynamic> route) => false,
-            );
-
-          } else {
-            AlertMessage.alert("แจ้งเตือน", "${response.message} ${response.statusCode}", context);
-          }
-          setState(() {
-            loading = false;
-          });
-        }
       }
     }
 

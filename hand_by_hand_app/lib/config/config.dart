@@ -1,7 +1,7 @@
 enum Environment { dev, prod }
 
 class Config {
-  static Environment environment = Environment.dev;
+  static Environment environment = Environment.prod;
 
   static String get baseUrl {
     switch (environment) {
