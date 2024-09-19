@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hand_by_hand_app/api/auth/auth_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand_app/api/user/user_service.dart';
+import 'package:hand_by_hand_app/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/pages/login_page.dart';
 
 class Feed extends StatefulWidget {
@@ -14,7 +15,7 @@ class _FeedState extends State<Feed> {
   @override
   Widget build(BuildContext context) {
     void logout() async {
-      await AuthService().logout();
+      context.read<AuthBloc>().add(LogoutEvent());
       if (context.mounted) {
         await Navigator.pushAndRemoveUntil(
           context,

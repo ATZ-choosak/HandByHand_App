@@ -2,12 +2,13 @@
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:hand_by_hand_app/api/auth/auth_service.dart';
 import 'package:hand_by_hand_app/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/components/alert_message.dart';
 import 'package:hand_by_hand_app/pages/auth/register.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hand_by_hand_app/pages/confirm_email.dart';
 import 'package:hand_by_hand_app/pages/feed.dart';
+import 'package:hand_by_hand_app/pages/forgot_password.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
@@ -23,10 +24,7 @@ class Login extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.all(35),
         child: SingleChildScrollView(
-          child: BlocProvider(
-            create: (context) => AuthBloc(auth: AuthService()),
-            child: LoginForm(),
-          ),
+          child: LoginForm(),
         ),
       ),
     );
@@ -87,12 +85,12 @@ class LoginForm extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            const ForgotPassword(),
+            const ForgotPasswordButton(),
             const SizedBox(
               height: 80,
             ),
             LoginButton(
-              submit: submit(),
+              submit: submit,
             ),
             const SizedBox(
               height: 90,
@@ -146,7 +144,7 @@ class CreateAccount extends StatelessWidget {
 class LoginButton extends StatelessWidget {
   const LoginButton({super.key, required this.submit});
 
-  final void submit;
+  final Function submit;
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +155,7 @@ class LoginButton extends StatelessWidget {
           width: 130,
           height: 50,
           child: ElevatedButton(
-            onPressed: () => submit,
+            onPressed: () => submit(),
             style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 backgroundColor: Theme.of(context).primaryColor,
@@ -182,7 +180,7 @@ class LoginButton extends StatelessWidget {
                           );
                         }
 
-                        if (state is AuthSuccess) {
+                        if (state is AuthLoginSuccess) {
                           WidgetsBinding.instance
                               .addPostFrameCallback((_) async {
                             await Navigator.pushAndRemoveUntil(
@@ -199,6 +197,19 @@ class LoginButton extends StatelessWidget {
                           AlertMessage.alert("แจ้งเตือน", state.error, context);
                         }
 
+                        if (state is AuthEmailNotVerify) {
+                          WidgetsBinding.instance
+                              .addPostFrameCallback((_) async {
+                            await Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ConfirmEmail(),
+                              ),
+                              (Route<dynamic> route) => false,
+                            );
+                          });
+                        }
+
                         return const Icon(Icons.arrow_forward);
                       },
                     )),
@@ -211,8 +222,8 @@ class LoginButton extends StatelessWidget {
   }
 }
 
-class ForgotPassword extends StatelessWidget {
-  const ForgotPassword({
+class ForgotPasswordButton extends StatelessWidget {
+  const ForgotPasswordButton({
     super.key,
   });
 
@@ -225,7 +236,14 @@ class ForgotPassword extends StatelessWidget {
           style: TextStyle(color: Theme.of(context).primaryColorDark),
         ),
         TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ForgotPassword(),
+                ),
+              );
+            },
             style: const ButtonStyle(
               overlayColor: WidgetStatePropertyAll(
                 Colors.transparent,

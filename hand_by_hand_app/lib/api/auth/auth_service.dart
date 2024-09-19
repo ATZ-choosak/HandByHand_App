@@ -45,4 +45,28 @@ class AuthService {
       print(e);
     }
   }
+
+  Future<AuthResponse> resetPassword(ResetPasswordEvent data) async {
+    try {
+      final result = await api.post(ApiEndpoints.resetPassword,
+          queryParameters: data.toMap());
+
+      return AuthResponse.response(result.statusCode, result.data["message"]);
+    } on DioException catch (e) {
+      return AuthResponse.response(
+          e.response?.statusCode, e.response?.data["message"]);
+    }
+  }
+
+  Future<AuthResponse> resendVerifyEmail(ResentVerifyEvent data) async {
+    try {
+      final result = await api.post(ApiEndpoints.resentVerifyEmail,
+          queryParameters: data.toMap());
+
+      return AuthResponse.response(result.statusCode, result.data["message"]);
+    } on DioException catch (e) {
+      return AuthResponse.response(
+          e.response?.statusCode, e.response?.data["message"]);
+    }
+  }
 }

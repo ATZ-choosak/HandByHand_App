@@ -5,6 +5,8 @@ abstract class AuthEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class InitEvent extends AuthEvent {}
+
 class LoginEvent extends AuthEvent {
   final String username;
   final String password;
@@ -18,6 +20,8 @@ class LoginEvent extends AuthEvent {
   @override
   List<Object> get props => [username, password];
 }
+
+class LogoutEvent extends AuthEvent {}
 
 class RegisterEvent extends AuthEvent {
   final String email;
@@ -36,4 +40,34 @@ class RegisterEvent extends AuthEvent {
 
   @override
   List<Object> get props => [email, name, password];
+}
+
+class ResetPasswordEvent extends AuthEvent {
+  final String email;
+
+  ResetPasswordEvent(this.email);
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      "email": email,
+    };
+  }
+
+  @override
+  List<Object> get props => [email];
+}
+
+class ResentVerifyEvent extends AuthEvent {
+  final String email;
+
+  ResentVerifyEvent(this.email);
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      "email": email,
+    };
+  }
+
+  @override
+  List<Object> get props => [email];
 }

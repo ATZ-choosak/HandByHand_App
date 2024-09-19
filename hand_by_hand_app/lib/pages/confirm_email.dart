@@ -1,14 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hand_by_hand_app/auth_bloc/bloc/auth_bloc.dart';
+import 'package:hand_by_hand_app/components/alert_message.dart';
 import 'package:hand_by_hand_app/pages/auth/login.dart';
 
 class ConfirmEmail extends StatelessWidget {
-  const ConfirmEmail({super.key, required this.email});
-
-  final String email;
+  const ConfirmEmail({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final state = BlocProvider.of<AuthBloc>(context).state;
+    String email = "abc@gmail.com";
+
+    if (state is AuthRegisterSuccess) {
+      email = state.email;
+    }
+
+    if (state is AuthEmailNotVerify) {
+      email = state.email;
+    }
+
+    void resendEmail() {
+      context.read<AuthBloc>().add(ResentVerifyEvent(email));
+    }
+
+    void toLogin() async {
+      context.read<AuthBloc>().add(InitEvent());
+      await Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const Login(),
+        ),
+        (Route<dynamic> route) => false,
+      );
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -57,7 +84,43 @@ class ConfirmEmail extends StatelessWidget {
                   style: TextStyle(height: 2),
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 8,
+                ),
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    if (state is AuthLoading) {
+                      return SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      );
+                    }
+
+                    if (state is AuthResentVerifySuccess) {
+                      AlertMessage.alert("แจ้งเตือน", state.message, context);
+                    }
+
+                    return TextButton(
+                        onPressed: () {
+                          resendEmail();
+                        },
+                        style: const ButtonStyle(
+                          overlayColor: WidgetStatePropertyAll(
+                            Colors.transparent,
+                          ),
+                        ),
+                        child: Text(
+                          "ส่งอีเมลอีกครั้ง",
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold),
+                        ));
+                  },
+                ),
+                const SizedBox(
+                  height: 30,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -65,14 +128,8 @@ class ConfirmEmail extends StatelessWidget {
                     SizedBox(
                       width: 130,
                       child: ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const Login(),
-                            ),
-                            (Route<dynamic> route) => false,
-                          );
+                        onPressed: () {
+                          toLogin();
                         },
                         style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
