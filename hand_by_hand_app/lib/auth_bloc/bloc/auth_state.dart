@@ -64,3 +64,7 @@ class AuthEmailNotVerify extends AuthFailure {
   @override
   List<Object?> get props => [error];
 }
+
+class AuthFirstLogin extends AuthState {
+  
+}

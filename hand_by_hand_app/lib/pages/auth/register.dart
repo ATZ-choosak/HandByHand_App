@@ -110,7 +110,7 @@ class RegisterForm extends StatelessWidget {
                     child: Text(
                       "เข้าสู่ระบบ",
                       style: TextStyle(
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).primaryColorLight,
                           fontWeight: FontWeight.bold),
                     ))
               ],

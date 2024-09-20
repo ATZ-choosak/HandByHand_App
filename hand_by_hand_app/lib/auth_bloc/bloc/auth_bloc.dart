@@ -35,7 +35,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await auth.login(event);
 
     if (result.status) {
-      emit(AuthLoginSuccess(result.message));
+      //emit(AuthLoginSuccess(result.message));
+      //mockup first login
+      emit(AuthFirstLogin());
     } else {
       if (result.statusCode == 400) {
         emit(AuthEmailNotVerify(

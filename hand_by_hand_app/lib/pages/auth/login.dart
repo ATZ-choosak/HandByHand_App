@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand_app/pages/confirm_email.dart';
 import 'package:hand_by_hand_app/pages/feed.dart';
 import 'package:hand_by_hand_app/pages/forgot_password.dart';
+import 'package:hand_by_hand_app/survey/first_profile_setting.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
@@ -133,7 +134,7 @@ class CreateAccount extends StatelessWidget {
             child: Text(
               "สร้างบัญชี",
               style: TextStyle(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).primaryColorLight,
                   fontWeight: FontWeight.bold),
             ))
       ],
@@ -197,6 +198,19 @@ class LoginButton extends StatelessWidget {
                           AlertMessage.alert("แจ้งเตือน", state.error, context);
                         }
 
+                        if (state is AuthFirstLogin) {
+                          WidgetsBinding.instance
+                              .addPostFrameCallback((_) async {
+                            await Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => FirstProfileSetting(),
+                              ),
+                              (Route<dynamic> route) => false,
+                            );
+                          });
+                        }
+
                         if (state is AuthEmailNotVerify) {
                           WidgetsBinding.instance
                               .addPostFrameCallback((_) async {
@@ -252,7 +266,7 @@ class ForgotPasswordButton extends StatelessWidget {
             child: Text(
               "รีเซ็ตรหัสผ่าน",
               style: TextStyle(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).primaryColorLight,
                   fontWeight: FontWeight.bold),
             ))
       ],

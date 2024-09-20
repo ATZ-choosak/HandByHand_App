@@ -70,7 +70,7 @@ class LoginPage extends StatelessWidget {
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.all(16.0),
                     side: BorderSide(
-                        width: 2, color: Theme.of(context).primaryColor),
+                        width: 2, color: Theme.of(context).primaryColorLight),
                     backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100),
@@ -86,7 +86,7 @@ class LoginPage extends StatelessWidget {
                   child: Text(
                     "เข้าสู่ระบบ",
                     style: TextStyle(
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).primaryColorLight,
                       fontSize: 14,
                     ),
                   ),

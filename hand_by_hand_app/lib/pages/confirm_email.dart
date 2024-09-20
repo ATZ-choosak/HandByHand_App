@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hand_by_hand_app/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/components/alert_message.dart';
+import 'package:hand_by_hand_app/components/circle_top.dart';
 import 'package:hand_by_hand_app/pages/auth/login.dart';
 
 class ConfirmEmail extends StatelessWidget {
@@ -152,26 +153,6 @@ class ConfirmEmail extends StatelessWidget {
             ),
           )
         ],
-      ),
-    );
-  }
-}
-
-class CircleTop extends StatelessWidget {
-  const CircleTop({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: -380,
-      left: -100,
-      child: Container(
-        width: 560,
-        height: 560,
-        decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor, shape: BoxShape.circle),
       ),
     );
   }

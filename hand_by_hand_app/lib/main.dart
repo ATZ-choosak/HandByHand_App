@@ -4,9 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hand_by_hand_app/api/auth/auth_service.dart';
 import 'package:hand_by_hand_app/api/token_service.dart';
 import 'package:hand_by_hand_app/auth_bloc/bloc/auth_bloc.dart';
+import 'package:hand_by_hand_app/category_bloc/bloc/category_bloc.dart';
+import 'package:hand_by_hand_app/mockup/category/category_mockup.dart';
 import 'package:hand_by_hand_app/onboarding/onboarding.dart';
-import 'package:hand_by_hand_app/pages/feed.dart';
 import 'package:hand_by_hand_app/singleton/api_instance.dart';
+import 'package:hand_by_hand_app/survey/first_profile_setting.dart';
 
 void main() {
   setupLocaltor();
@@ -23,6 +25,9 @@ class MainApp extends StatelessWidget {
         BlocProvider(
           create: (context) => AuthBloc(auth: AuthService()),
         ),
+        BlocProvider(
+          create: (context) => CategoryBloc(CategoryMockup().getCategory()),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -32,7 +37,7 @@ class MainApp extends StatelessWidget {
           brightness: Brightness.light,
           visualDensity: VisualDensity.standard,
           primaryColor: const Color(0xfff0b000),
-          primaryColorLight: const Color(0xfff0b000),
+          primaryColorLight: const Color.fromARGB(255, 54, 171, 157),
           primaryColorDark: const Color(0xff5e5e5e),
           textTheme: GoogleFonts.notoSansThaiTextTheme(
             Theme.of(context).textTheme,
@@ -45,7 +50,7 @@ class MainApp extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data!.isNotEmpty) {
-                  return const Feed();
+                  return FirstProfileSetting();
                 } else {
                   return const CircularProgressIndicator();
                 }
