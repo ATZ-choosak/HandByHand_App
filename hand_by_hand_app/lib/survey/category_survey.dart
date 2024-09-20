@@ -32,6 +32,7 @@ class CategorySurvey extends StatelessWidget {
 
     return CustomScaffold(
         child: Container(
+      width: double.infinity,
       padding: const EdgeInsets.only(top: 100, left: 20, right: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -62,14 +63,14 @@ class CategorySurvey extends StatelessWidget {
                       decoration: const BoxDecoration(),
                       child: SizedBox(
                           width: double.infinity,
-                          height: 600,
+                          height: 620,
                           child: GridView.builder(
                             physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(2),
                             gridDelegate: SliverQuiltedGridDelegate(
                                 crossAxisCount: 4,
-                                crossAxisSpacing: 5,
-                                mainAxisSpacing: 5,
+                                crossAxisSpacing: 2,
+                                mainAxisSpacing: 2,
                                 repeatPattern:
                                     QuiltedGridRepeatPattern.inverted,
                                 pattern: [
@@ -95,7 +96,13 @@ class CategorySurvey extends StatelessWidget {
                 );
               }
 
-              return const Center(child: CircularProgressIndicator());
+              return SizedBox(
+                  width: double.infinity,
+                  height: 620,
+                  child: Center(
+                      child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor,
+                  )));
             },
           ),
           const SizedBox(
@@ -127,30 +134,40 @@ class CategoryCard extends StatelessWidget {
           .add(CategorySelectEvent(id: categorys[index].id));
     }
 
-    return InkWell(
+    return GestureDetector(
       onTap: onSelected,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           border: selected
               ? Border.all(
-                  color: Theme.of(context).primaryColorLight,
-                  strokeAlign: BorderSide.strokeAlignOutside,
-                  width: 2)
+                  color: Theme.of(context).primaryColor,
+                  strokeAlign: BorderSide.strokeAlignInside,
+                  width: 4,
+                )
               : null,
           borderRadius: const BorderRadius.all(
-            Radius.circular(10),
+            Radius.circular(8),
           ),
         ),
         child: Stack(
           children: [
             ImageFilter(
-              brightness: -130,
-              child: Image.asset(
-                width: double.infinity,
-                height: double.infinity,
-                categorys[index].image,
-                fit: BoxFit.cover,
+              brightness: selected ? -150 : -100,
+              child: Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                  Radius.circular(4),
+                )),
+                child: Image.asset(
+                  width: double.infinity,
+                  height: double.infinity,
+                  categorys[index].image,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             SizedBox(

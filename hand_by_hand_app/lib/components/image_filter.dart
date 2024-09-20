@@ -8,29 +8,33 @@ class ImageFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColorFiltered(
-        colorFilter: ColorFilter.matrix([
-          1,
-          0,
-          0,
-          0,
-          brightness,
-          0,
-          1,
-          0,
-          0,
-          brightness,
-          0,
-          0,
-          1,
-          0,
-          brightness,
-          0,
-          0,
-          0,
-          1,
-          0,
-        ]),
-        child: child);
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      child: ColorFiltered(
+          colorFilter: ColorFilter.matrix([
+            1,
+            0,
+            0,
+            0,
+            brightness,
+            0,
+            1,
+            0,
+            0,
+            brightness,
+            0,
+            0,
+            1,
+            0,
+            brightness,
+            0,
+            0,
+            0,
+            1,
+            0,
+          ]),
+          child: child),
+    );
   }
 }

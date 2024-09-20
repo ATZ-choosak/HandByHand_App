@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand_app/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/components/alert_message.dart';
+import 'package:hand_by_hand_app/components/custom_scaffold.dart';
 import 'package:hand_by_hand_app/pages/auth/login.dart';
 import 'package:hand_by_hand_app/pages/confirm_email.dart';
 
@@ -11,13 +12,11 @@ class Register extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      extendBodyBehindAppBar: true,
+    return CustomScaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
       ),
-      body: Container(
+      child: Container(
         padding: const EdgeInsets.all(35),
         child: SingleChildScrollView(
           child: RegisterForm(),
@@ -123,8 +122,7 @@ class RegisterForm extends StatelessWidget {
 }
 
 class CreateAccountButton extends StatelessWidget {
-  const CreateAccountButton(
-      {super.key, required this.submit});
+  const CreateAccountButton({super.key, required this.submit});
 
   final Function submit;
 

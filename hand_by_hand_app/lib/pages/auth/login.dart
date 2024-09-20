@@ -4,6 +4,8 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:hand_by_hand_app/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/components/alert_message.dart';
+import 'package:hand_by_hand_app/components/custom_button.dart';
+import 'package:hand_by_hand_app/components/custom_scaffold.dart';
 import 'package:hand_by_hand_app/pages/auth/register.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand_app/pages/confirm_email.dart';
@@ -16,13 +18,11 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      extendBodyBehindAppBar: true,
+    return CustomScaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
       ),
-      body: Container(
+      child: Container(
         padding: const EdgeInsets.all(35),
         child: SingleChildScrollView(
           child: LoginForm(),
@@ -92,6 +92,7 @@ class LoginForm extends StatelessWidget {
             ),
             LoginButton(
               submit: submit,
+              buttonText: "เข้าสู่ระบบ",
             ),
             const SizedBox(
               height: 90,
@@ -142,10 +143,12 @@ class CreateAccount extends StatelessWidget {
   }
 }
 
-class LoginButton extends StatelessWidget {
-  const LoginButton({super.key, required this.submit});
-
-  final Function submit;
+class LoginButton extends CustomButton {
+  const LoginButton(
+      {super.key,
+      required super.submit,
+      super.disabled = false,
+      required super.buttonText});
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +156,6 @@ class LoginButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         SizedBox(
-          width: 130,
           height: 50,
           child: ElevatedButton(
             onPressed: () => submit(),
@@ -161,73 +163,73 @@ class LoginButton extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 backgroundColor: Theme.of(context).primaryColor,
                 foregroundColor: Colors.white),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                const Text("เข้าสู่ระบบ"),
-                SizedBox(
+            child: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is AuthLoading) {
+                  return const SizedBox(
                     height: 20,
                     width: 20,
-                    child: BlocBuilder<AuthBloc, AuthState>(
-                      builder: (context, state) {
-                        if (state is AuthLoading) {
-                          return const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
-                          );
-                        }
-
-                        if (state is AuthLoginSuccess) {
-                          WidgetsBinding.instance
-                              .addPostFrameCallback((_) async {
-                            await Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const Feed(),
-                              ),
-                              (Route<dynamic> route) => false,
-                            );
-                          });
-                        }
-
-                        if (state is AuthFailure) {
-                          AlertMessage.alert("แจ้งเตือน", state.error, context);
-                        }
-
-                        if (state is AuthFirstLogin) {
-                          WidgetsBinding.instance
-                              .addPostFrameCallback((_) async {
-                            await Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => FirstProfileSetting(),
-                              ),
-                              (Route<dynamic> route) => false,
-                            );
-                          });
-                        }
-
-                        if (state is AuthEmailNotVerify) {
-                          WidgetsBinding.instance
-                              .addPostFrameCallback((_) async {
-                            await Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const ConfirmEmail(),
-                              ),
-                              (Route<dynamic> route) => false,
-                            );
-                          });
-                        }
-
-                        return const Icon(Icons.arrow_forward);
-                      },
-                    )),
-              ],
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  );
+                }
+                        
+                if (state is AuthLoginSuccess) {
+                  WidgetsBinding.instance
+                      .addPostFrameCallback((_) async {
+                    await Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const Feed(),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
+                  });
+                }
+                        
+                if (state is AuthFailure) {
+                  AlertMessage.alert("แจ้งเตือน", state.error, context);
+                }
+                        
+                if (state is AuthFirstLogin) {
+                  WidgetsBinding.instance
+                      .addPostFrameCallback((_) async {
+                    await Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => FirstProfileSetting(),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
+                  });
+                }
+                        
+                if (state is AuthEmailNotVerify) {
+                  WidgetsBinding.instance
+                      .addPostFrameCallback((_) async {
+                    await Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ConfirmEmail(),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
+                  });
+                }
+                        
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(buttonText),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    const Icon(Icons.arrow_forward)
+                  ],
+                );
+              },
             ),
           ),
         )
