@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CustomInput extends StatelessWidget {
-  const CustomInput(
+class CustomInputMultiline extends StatelessWidget {
+  const CustomInputMultiline(
       {super.key,
       required TextEditingController inputController,
       this.icon,
@@ -23,16 +23,17 @@ class CustomInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: _inputController,
+      keyboardType: TextInputType.multiline,
       maxLines: maxLine,
       minLines: minLine,
       decoration: InputDecoration(
-          icon: icon,
-          hintText: hintText,
-          hintStyle: TextStyle(color: Colors.grey[500]),
-          labelText: labelText,
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Theme.of(context).primaryColor)),
-          floatingLabelStyle: TextStyle(color: Theme.of(context).primaryColor)),
+        icon: icon,
+        hintText: hintText,
+        hintStyle: TextStyle(color: Colors.grey[500]),
+        border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(width: 2)),
+      ),
       validator: (value) {
         if (value == null || value.isEmpty) {
           return validateText;

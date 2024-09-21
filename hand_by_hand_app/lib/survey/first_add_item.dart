@@ -4,8 +4,10 @@ import 'package:hand_by_hand_app/components/circle_top.dart';
 import 'package:hand_by_hand_app/components/custom_button.dart';
 import 'package:hand_by_hand_app/components/custom_scaffold_without_scroll.dart';
 import 'package:hand_by_hand_app/components/custom_textbutton.dart';
+import 'package:hand_by_hand_app/module/page_route.dart';
 import 'package:hand_by_hand_app/module/page_route_not_return.dart';
 import 'package:hand_by_hand_app/pages/feed.dart';
+import 'package:hand_by_hand_app/pages/item/add_item.dart';
 
 class FirstAddItem extends StatelessWidget {
   const FirstAddItem({super.key});
@@ -52,7 +54,9 @@ class FirstAddItem extends StatelessWidget {
                   height: 40,
                 ),
                 CustomButton(
-                  submit: () {},
+                  submit: () {
+                    pageRoute(context, const AddItem());
+                  },
                   buttonText: "เพิ่มเลย",
                   icon: const Icon(Icons.add),
                 )

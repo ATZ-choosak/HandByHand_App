@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hand_by_hand_app/additem_bloc/bloc/additem_bloc.dart';
 import 'package:hand_by_hand_app/api/auth/auth_service.dart';
 import 'package:hand_by_hand_app/api/token_service.dart';
 import 'package:hand_by_hand_app/auth_bloc/bloc/auth_bloc.dart';
@@ -32,12 +33,20 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => CategoryBloc(CategoryMockup().getCategory()),
+        ),
+        BlocProvider(
+          create: (context) => AdditemBloc(
+              CategoryMockup().getCategory(), CategoryMockup().getCategory()),
         )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: const Color(0xfff0b000),
+              secondary: const Color.fromARGB(255, 54, 171, 157),
+              surface: Colors.white),
           scaffoldBackgroundColor: Colors.white,
           brightness: Brightness.light,
           visualDensity: VisualDensity.standard,
