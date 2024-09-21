@@ -5,11 +5,13 @@ class CustomButton extends StatelessWidget {
       {super.key,
       required this.submit,
       required this.buttonText,
-      this.disabled = false});
+      this.disabled = false,
+      this.icon});
 
   final Function submit;
   final String buttonText;
   final bool disabled;
+  final Icon? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -20,15 +22,19 @@ class CustomButton extends StatelessWidget {
         onPressed: () => disabled ? null : submit(),
         style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            backgroundColor: disabled ? Theme.of(context).primaryColorDark : Theme.of(context).primaryColor,
+            backgroundColor: disabled
+                ? Theme.of(context).primaryColorDark
+                : Theme.of(context).primaryColor,
             foregroundColor: Colors.white),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(buttonText),
-            const SizedBox(
-                height: 20, width: 20, child: Icon(Icons.arrow_forward)),
+            SizedBox(
+                height: 20,
+                width: 20,
+                child: icon ?? const Icon(Icons.arrow_forward)),
           ],
         ),
       ),

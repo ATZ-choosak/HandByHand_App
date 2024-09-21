@@ -8,7 +8,7 @@ import 'package:hand_by_hand_app/category_bloc/bloc/category_bloc.dart';
 import 'package:hand_by_hand_app/components/custom_button.dart';
 import 'package:hand_by_hand_app/components/custom_scaffold.dart';
 import 'package:hand_by_hand_app/components/image_filter.dart';
-import 'package:hand_by_hand_app/pages/feed.dart';
+import 'package:hand_by_hand_app/survey/first_add_item.dart';
 
 class CategorySurvey extends StatelessWidget {
   const CategorySurvey({super.key});
@@ -46,7 +46,7 @@ class CategorySurvey extends StatelessWidget {
                   await Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const Feed(),
+                      builder: (_) => const FirstAddItem(),
                     ),
                     (Route<dynamic> route) => false,
                   );
@@ -63,20 +63,19 @@ class CategorySurvey extends StatelessWidget {
                       decoration: const BoxDecoration(),
                       child: SizedBox(
                           width: double.infinity,
-                          height: 620,
+                          height: 920,
                           child: GridView.builder(
                             physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(2),
                             gridDelegate: SliverQuiltedGridDelegate(
                                 crossAxisCount: 4,
-                                crossAxisSpacing: 2,
-                                mainAxisSpacing: 2,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
                                 repeatPattern:
                                     QuiltedGridRepeatPattern.inverted,
                                 pattern: [
                                   const QuiltedGridTile(1, 2),
-                                  const QuiltedGridTile(1, 1),
-                                  const QuiltedGridTile(1, 1),
+                                  const QuiltedGridTile(1, 2),
                                 ]),
                             itemCount: state.categorys.length,
                             itemBuilder: (context, index) {
@@ -170,9 +169,11 @@ class CategoryCard extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
+            AnimatedContainer(
               width: double.infinity,
               height: double.infinity,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -180,7 +181,12 @@ class CategoryCard extends StatelessWidget {
                   Text(
                     textAlign: TextAlign.center,
                     categorys[index].title,
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                    style: TextStyle(
+                        color: selected
+                            ? Theme.of(context).primaryColor
+                            : Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

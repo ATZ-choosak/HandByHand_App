@@ -80,7 +80,7 @@ class CategoryMockup {
           selected: false),
       CategorySelectedModel(
           id: 16,
-          title: "ของเล่น",
+          title: "เกม และ ของเล่น",
           image: "images/category/fashion.jpg",
           selected: false),
       CategorySelectedModel(

@@ -12,8 +12,12 @@ import 'package:hand_by_hand_app/singleton/api_instance.dart';
 import 'package:hand_by_hand_app/survey/first_profile_setting.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   setupLocaltor();
-  runApp(const MainApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(const MainApp());
+  });
 }
 
 class MainApp extends StatelessWidget {
