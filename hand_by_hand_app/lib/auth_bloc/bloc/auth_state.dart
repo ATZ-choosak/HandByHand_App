@@ -65,6 +65,12 @@ class AuthEmailNotVerify extends AuthFailure {
   List<Object?> get props => [error];
 }
 
-class AuthFirstLogin extends AuthState {
-  
+class AuthFirstLogin extends AuthState {}
+
+class AuthUpdateProfileImageLoading extends AuthState {}
+
+class AuthUpdateProfileImageSuccess extends AuthState {
+  final File image;
+
+  AuthUpdateProfileImageSuccess({required this.image});
 }

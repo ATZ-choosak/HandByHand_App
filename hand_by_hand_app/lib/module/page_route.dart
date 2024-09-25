@@ -10,3 +10,13 @@ void pageRoute(BuildContext context, Widget page) {
     );
   });
 }
+
+void pageRouteWithOutPostFrameCallback(
+    BuildContext context, Widget page) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => page,
+    ),
+  );
+}

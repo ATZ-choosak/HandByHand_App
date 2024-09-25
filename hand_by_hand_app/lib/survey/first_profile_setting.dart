@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hand_by_hand_app/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/components/circle_top.dart';
 import 'package:hand_by_hand_app/components/custom_button.dart';
 import 'package:hand_by_hand_app/components/custom_input.dart';
@@ -96,15 +98,36 @@ class ProfilePicture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void updateProfileImage() {
+      context.read<AuthBloc>().add(UpdateProfileImageEvent());
+    }
+
     return Stack(
       children: [
         Container(
           width: 180,
           height: 180,
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-              border: Border.all(width: 3, color: Colors.white),
+              border: Border.all(
+                  width: 5,
+                  color: Colors.white,
+                  strokeAlign: BorderSide.strokeAlignOutside),
               borderRadius: BorderRadius.circular(100),
-              color: Theme.of(context).primaryColorLight),
+              color: Colors.white),
+          child: BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is AuthUpdateProfileImageSuccess) {
+                return Image.file(
+                  state.image,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                );
+              }
+              return const SizedBox();
+            },
+          ),
         ),
         Positioned(
           bottom: 0,
@@ -113,7 +136,7 @@ class ProfilePicture extends StatelessWidget {
             style: const ButtonStyle(
                 shape: WidgetStatePropertyAll(CircleBorder()),
                 backgroundColor: WidgetStatePropertyAll(Colors.white)),
-            onPressed: () {},
+            onPressed: updateProfileImage,
             child: Icon(
               Icons.add,
               color: Theme.of(context).primaryColor,

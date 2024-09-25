@@ -42,6 +42,8 @@ class RegisterEvent extends AuthEvent {
   List<Object> get props => [email, name, password];
 }
 
+class UpdateProfileImageEvent extends AuthEvent {}
+
 class ResetPasswordEvent extends AuthEvent {
   final String email;
 
