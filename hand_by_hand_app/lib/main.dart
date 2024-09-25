@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hand_by_hand_app/additem_bloc/bloc/additem_bloc.dart';
-import 'package:hand_by_hand_app/api/auth/auth_service.dart';
-import 'package:hand_by_hand_app/api/token_service.dart';
-import 'package:hand_by_hand_app/auth_bloc/bloc/auth_bloc.dart';
-import 'package:hand_by_hand_app/category_bloc/bloc/category_bloc.dart';
+import 'package:hand_by_hand_app/presentation/bloc/additem_bloc/bloc/additem_bloc.dart';
+import 'package:hand_by_hand_app/data/source/token_service.dart';
+import 'package:hand_by_hand_app/presentation/bloc/auth_bloc/bloc/auth_bloc.dart';
+import 'package:hand_by_hand_app/presentation/bloc/category_bloc/bloc/category_bloc.dart';
 import 'package:hand_by_hand_app/mockup/category/category_mockup.dart';
-import 'package:hand_by_hand_app/onboarding/onboarding.dart';
-import 'package:hand_by_hand_app/singleton/api_instance.dart';
-import 'package:hand_by_hand_app/survey/first_profile_setting.dart';
+import 'package:hand_by_hand_app/presentation/view/onboarding/onboarding.dart';
+import 'package:hand_by_hand_app/presentation/view/survey/first_profile_setting.dart';
+import 'package:hand_by_hand_app/service_locator.dart.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  setupLocaltor();
+  setupLocator();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MainApp());
@@ -29,7 +28,7 @@ class MainApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => AuthBloc(auth: AuthService()),
+          create: (context) => getIt<AuthBloc>(),
         ),
         BlocProvider(
           create: (context) => CategoryBloc(CategoryMockup().getCategory()),

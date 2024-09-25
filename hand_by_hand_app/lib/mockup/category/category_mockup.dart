@@ -1,4 +1,4 @@
-import 'package:hand_by_hand_app/api/category/category_model.dart';
+import 'package:hand_by_hand_app/data/models/category/category_model.dart';
 
 class CategoryMockup {
   List<CategorySelectedModel> getCategory() {
