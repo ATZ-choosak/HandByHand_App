@@ -7,12 +7,18 @@ final class CategoryInitial extends CategoryState {}
 
 final class CategoryLoading extends CategoryState {}
 
+final class CategoryFailure extends CategoryState {
+  final String message;
+
+  CategoryFailure(this.message);
+}
+
 final class CategorySuccess extends CategoryState {
   final List<CategorySelectedModel> categorys;
 
-  CategorySuccess({required this.categorys});
+  CategorySuccess(this.categorys);
 }
 
 final class CategorySubmitSuccess extends CategorySuccess {
-  CategorySubmitSuccess({required super.categorys});
+  CategorySubmitSuccess(super.categorys);
 }

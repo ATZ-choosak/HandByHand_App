@@ -11,4 +11,13 @@ class Config {
         return "http://10.0.2.2:8000/api";
     }
   }
+
+  static String get baseImageUrl {
+    switch (environment) {
+      case Environment.prod:
+        return "http://atozerserver.3bbddns.com:21758";
+      case Environment.dev:
+        return "http://10.0.2.2:8000";
+    }
+  }
 }

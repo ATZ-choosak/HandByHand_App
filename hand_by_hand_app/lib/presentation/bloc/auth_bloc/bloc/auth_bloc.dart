@@ -42,8 +42,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _handleLogoutEvent(
       LogoutEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
-    await authRepository.logout();
-    emit(AuthLogoutSuccess());
+    final result = await authRepository.logout();
+
+    result.fold((failure) => AuthFailure(failure),
+        (success) => emit(AuthLogoutSuccess()));
   }
 
   Future<void> _handleLoginEvent(
@@ -53,10 +55,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await authRepository.login(event);
 
     result.fold((failure) {
-      if (failure["email_verify"] == false) {
-        return emit(AuthEmailNotVerify(event.username));
+      if (failure == "EMAIL_NOT_VERIFY") {
+        emit(AuthEmailNotVerify(event.username));
+      } else {
+        emit(AuthFailure(failure));
       }
-      return emit(AuthFailure(failure));
     }, (success) => emit(AuthFirstLogin()));
   }
 

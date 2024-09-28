@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hand_by_hand_app/data/models/category/category_model.dart';
+import 'package:hand_by_hand_app/module/image_path.dart';
 import 'package:hand_by_hand_app/presentation/bloc/category_bloc/bloc/category_bloc.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_button.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_scaffold.dart';
@@ -15,7 +16,7 @@ class CategorySurvey extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<CategoryBloc>().add(CategoryLoadingEvent());
+    BlocProvider.of<CategoryBloc>(context).add(CategoryLoadingEvent());
 
     bool enableButton(List<CategorySelectedModel> categorys) {
       return categorys
@@ -57,34 +58,32 @@ class CategorySurvey extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: 20),
-                      clipBehavior: Clip.antiAlias,
-                      decoration: const BoxDecoration(),
-                      child: SizedBox(
-                          width: double.infinity,
-                          height: 920,
-                          child: GridView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            padding: const EdgeInsets.all(2),
-                            gridDelegate: SliverQuiltedGridDelegate(
-                                crossAxisCount: 4,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 10,
-                                repeatPattern:
-                                    QuiltedGridRepeatPattern.inverted,
-                                pattern: [
-                                  const QuiltedGridTile(1, 2),
-                                  const QuiltedGridTile(1, 2),
-                                ]),
-                            itemCount: state.categorys.length,
-                            itemBuilder: (context, index) {
-                              return CategoryCard(
-                                categorys: state.categorys,
-                                index: index,
-                              );
-                            },
-                          )),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(2),
+                      gridDelegate: SliverQuiltedGridDelegate(
+                          crossAxisCount: 4,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          repeatPattern: QuiltedGridRepeatPattern.inverted,
+                          pattern: [
+                            const QuiltedGridTile(1, 2),
+                            const QuiltedGridTile(1, 2),
+                          ]),
+                      itemCount: state.categorys.length,
+                      itemBuilder: (context, index) {
+                        return CategoryCard(
+                          categorys: state.categorys,
+                          index: index,
+                        );
+                      },
+                    ),
+                    const SizedBox(
+                      height: 10,
                     ),
                     CustomButton(
                       disabled: !enableButton(state.categorys),
@@ -97,7 +96,7 @@ class CategorySurvey extends StatelessWidget {
 
               return SizedBox(
                   width: double.infinity,
-                  height: 620,
+                  height: MediaQuery.of(context).size.height / 2,
                   child: Center(
                       child: CircularProgressIndicator(
                     color: Theme.of(context).primaryColor,
@@ -161,12 +160,17 @@ class CategoryCard extends StatelessWidget {
                     borderRadius: BorderRadius.all(
                   Radius.circular(4),
                 )),
-                child: Image.asset(
+                child: categorys[index].image.isNotEmpty ? Image.network(
+                  imagePath(categorys[index].image),
                   width: double.infinity,
                   height: double.infinity,
-                  categorys[index].image,
                   fit: BoxFit.cover,
-                ),
+                ) : Image.asset(
+                      width: double.infinity,
+                      height: double.infinity,
+                      "images/category/fashion.jpg",
+                      fit: BoxFit.cover,
+                    ),
               ),
             ),
             AnimatedContainer(

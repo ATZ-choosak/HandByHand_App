@@ -31,7 +31,7 @@ class MainApp extends StatelessWidget {
           create: (context) => getIt<AuthBloc>(),
         ),
         BlocProvider(
-          create: (context) => CategoryBloc(CategoryMockup().getCategory()),
+          create: (context) => getIt<CategoryBloc>(),
         ),
         BlocProvider(
           create: (context) => AdditemBloc(

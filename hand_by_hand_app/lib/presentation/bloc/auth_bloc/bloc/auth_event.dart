@@ -31,6 +31,14 @@ class RegisterEvent extends AuthEvent {
   final String name;
   final String password;
 
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      "email": email,
+      "name": name,
+      "password": password,
+    };
+  }
+
   RegisterEvent(this.email, this.name, this.password);
 
   @override
@@ -42,6 +50,12 @@ class UpdateProfileImageEvent extends AuthEvent {}
 class ResetPasswordEvent extends AuthEvent {
   final String email;
 
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      "email": email,
+    };
+  }
+
   ResetPasswordEvent(this.email);
 
   @override
@@ -50,6 +64,12 @@ class ResetPasswordEvent extends AuthEvent {
 
 class ResentVerifyEvent extends AuthEvent {
   final String email;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      "email": email,
+    };
+  }
 
   ResentVerifyEvent(this.email);
 

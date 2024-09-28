@@ -12,7 +12,7 @@ class AddItemStepThree extends StatefulWidget {
 }
 
 class _AddItemStepThreeState extends State<AddItemStepThree> {
-  bool? notExchange = false, requireAll = false;
+  bool? exchange = false, requireAll = false;
 
   List<int> categoryRequireSelected = [];
   final key = GlobalKey<FormFieldState>();
@@ -33,76 +33,123 @@ class _AddItemStepThreeState extends State<AddItemStepThree> {
           ),
         ),
         const SizedBox(
-          height: 20,
+          height: 10,
         ),
         Container(
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
               CustomCheckbox(
-                label: "ไม่มีเงื่อนไขในการแลกเปลี่ยน",
+                label: "ต้องการแลกเปลี่ยนกับคนอื่น",
                 onChanged: (value) {
                   setState(() {
-                    notExchange = value;
-                    if (notExchange!) {
+                    exchange = value;
+                    if (exchange!) {
                       requireAll = false;
                     }
                   });
                 },
-                isCheck: notExchange,
+                isCheck: exchange,
               ),
-              if (!notExchange!)
-                CustomCheckbox(
-                  disabled: notExchange!,
-                  label:
-                      "จะต้องมีครบทุกเงื่อนไข (ผู้ที่จะแลกเปลี่ยนกับสิ่งของนี้ จะต้องมีครบทุกประเภทที่ระบุ)",
-                  onChanged: (value) {
-                    setState(() {
-                      requireAll = value;
-                    });
-                  },
-                  isCheck: requireAll,
-                )
-              else
-                const SizedBox(),
-              const SizedBox(
-                height: 20,
-              ),
-              if (!notExchange!)
-                MultiSelectDialogField<int>(
-                  key: key,
-                  items: categoryRequire
-                      .map(
-                        (e) => MultiSelectItem<int>(e.id, e.title),
-                      )
-                      .toList(),
-                  onConfirm: (data) {
-                    categoryRequireSelected = data;
-                    key.currentState?.validate();
-                  },
-                  buttonText: const Text("เลือกประเภทที่ต้องการแลกเปลี่ยน"),
-                  searchable: true,
-                  title: const Text("ประเภท"),
-                  cancelText: const Text("ยกเลิก"),
-                  confirmText: const Text("ตกลง"),
-                  selectedItemsTextStyle: const TextStyle(color: Colors.white),
-                  selectedColor: Theme.of(context).primaryColor,
-                  checkColor: Colors.white,
-                  itemsTextStyle:
-                      const TextStyle(fontSize: 14, color: Colors.black),
-                  searchHint: "ค้นหา",
-                  listType: MultiSelectListType.CHIP,
-                  chipDisplay: MultiSelectChipDisplay(
-                    chipColor: Theme.of(context).primaryColor,
-                    textStyle: const TextStyle(color: Colors.white),
-                    onTap: (data) {
-                      categoryRequireSelected.remove(data);
+              if (exchange!)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: MultiSelectDialogField<int>(
+                    key: key,
+                    items: categoryRequire
+                        .map(
+                          (e) => MultiSelectItem<int>(e.id, e.title),
+                        )
+                        .toList(),
+                    onConfirm: (data) {
+                      categoryRequireSelected = data;
                       key.currentState?.validate();
                     },
+                    buttonText: const Text(
+                      "เพิ่มประเภทของที่อยากแลกเปลี่ยนด้วย",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    buttonIcon: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
+                    searchable: true,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        color: Theme.of(context).primaryColor,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10))),
+                    title: const Text("ประเภท"),
+                    cancelText: const Text("ยกเลิก"),
+                    confirmText: const Text("ตกลง"),
+                    selectedItemsTextStyle:
+                        const TextStyle(color: Colors.white),
+                    selectedColor: Theme.of(context).primaryColor,
+                    checkColor: Colors.white,
+                    itemsTextStyle:
+                        const TextStyle(fontSize: 14, color: Colors.black),
+                    searchHint: "ค้นหา",
+                    listType: MultiSelectListType.CHIP,
+                    chipDisplay: MultiSelectChipDisplay(
+                      chipColor: Theme.of(context).primaryColor,
+                      textStyle: const TextStyle(color: Colors.white),
+                      onTap: (data) {
+                        categoryRequireSelected.remove(data);
+                        key.currentState?.validate();
+                      },
+                    ),
                   ),
                 )
               else
-                const SizedBox()
+                const SizedBox(),
+              if (exchange!)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Column(
+                    children: [
+                      CustomCheckbox(
+                        disabled: !exchange!,
+                        label:
+                            "จะต้องมีครบทุกประเภท (ผู้ที่จะแลกเปลี่ยนกับของชิ้นนี้ จะต้องมีครบทุกประเภทที่ระบุ)",
+                        onChanged: (value) {
+                          setState(() {
+                            requireAll = value;
+                          });
+                        },
+                        isCheck: requireAll,
+                      ),
+                      if (!requireAll!) Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColorLight,
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10))),
+                              child: const Text(
+                                textAlign: TextAlign.start,
+                                "กรณีไม่เลือกจะต้องมีครบทุกประเภท ผู้ที่จะแลกของชิ้นนี้ต้องมีอย่างใดอย่างนึงในประเภทที่ระบุ",
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.white),
+                              ),
+                            ) else const SizedBox(),
+                    ],
+                  ),
+                )
+              else
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10))),
+                  child: const Text(
+                    textAlign: TextAlign.start,
+                    "กรณีไม่ต้องการแลกเปลี่ยนกับคนอื่น ของชิ้นนี้จะเป็นการบริจาค",
+                    style: TextStyle(fontSize: 12, color: Colors.white),
+                  ),
+                ),
+              const SizedBox(
+                height: 80,
+              ),
             ],
           ),
         ),

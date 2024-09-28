@@ -117,24 +117,29 @@ class StepController extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 20,
-      left: 20,
-      right: 20,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CustomTextbuttonStepper(
-            disabled: currentStep <= 0,
-            submit: onStepCancel,
-            buttonText: currentStep <= 0 ? "" : "ย้อนกลับ",
-            buttonColor: Theme.of(context).primaryColorLight,
-          ),
-          CustomTextbuttonStepper(
-            submit: onStepContinue,
-            buttonText: currentStep >= 2 ? "เสร็จสิ้น" : "ถัดไป",
-            buttonColor: Theme.of(context).primaryColor,
-          ),
-        ],
+      bottom: 0,
+      left: 0,
+      width: MediaQuery.of(context).size.width,
+      child: Container(
+        color: Colors.white,
+        padding: const EdgeInsets.all(20),
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CustomTextbuttonStepper(
+              disabled: currentStep <= 0,
+              submit: onStepCancel,
+              buttonText: currentStep <= 0 ? "" : "ย้อนกลับ",
+              buttonColor: Theme.of(context).primaryColorLight,
+            ),
+            CustomTextbuttonStepper(
+              submit: onStepContinue,
+              buttonText: currentStep >= 2 ? "เสร็จสิ้น" : "ถัดไป",
+              buttonColor: Theme.of(context).primaryColor,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -26,6 +26,9 @@ class _FeedState extends State<Feed> {
       }
     }
 
-    return const Scaffold(body: Center());
+    return Scaffold(
+        body: Center(
+      child: ElevatedButton(onPressed: logout, child: const Text("Logout")),
+    ));
   }
 }
