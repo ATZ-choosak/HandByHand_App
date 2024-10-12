@@ -10,12 +10,12 @@ class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 
 class AuthLoginSuccess extends AuthState {
-  final String message;
+  final AuthModel auth;
 
-  AuthLoginSuccess(this.message);
+  AuthLoginSuccess(this.auth);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [auth];
 }
 
 class AuthLogoutSuccess extends AuthState {}
@@ -72,4 +72,31 @@ class AuthUpdateProfileImageSuccess extends AuthState {
   final File image;
 
   AuthUpdateProfileImageSuccess({required this.image});
+}
+
+class AuthUpdateProfileLoading extends AuthState {}
+
+class AuthUpdateProfileSuccess extends AuthState {}
+
+class AuthUpdateProfileFailure extends AuthState {
+  final String message;
+
+  AuthUpdateProfileFailure(this.message);
+}
+
+class GetMeLoading extends AuthState {}
+
+class GetMeFailure extends AuthState {
+  final String message;
+
+  GetMeFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class GetMeSuccess extends AuthState {
+  final UserGetMe getMe;
+
+  GetMeSuccess({required this.getMe});
 }

@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hand_by_hand_app/data/models/category/category_model.dart';
+import 'package:hand_by_hand_app/module/page_route_not_return.dart';
+import 'package:hand_by_hand_app/presentation/bloc/item_bloc/bloc/item_bloc.dart';
+import 'package:hand_by_hand_app/presentation/view/survey/first_add_item_success.dart';
+import 'package:hand_by_hand_app/presentation/widgets/alert_message.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_scaffold_without_scroll.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_textbutton_stepper.dart';
 import 'package:hand_by_hand_app/presentation/view/item/steps/add_item_step_one.dart';
@@ -9,19 +15,54 @@ class AddItem extends StatefulWidget {
   const AddItem({super.key});
 
   @override
-  State<AddItem> createState() => _AddItemState();
+  State<AddItem> createState() => _ItemState();
 }
 
-class _AddItemState extends State<AddItem> {
+class _ItemState extends State<AddItem> {
   int currentStep = 0;
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  int? categoryId;
+  List<int>? preferredCategoryIds;
+  bool isExchangeable = false;
+  bool requireAllCategories = false;
+  final TextEditingController _addressController = TextEditingController();
+
+  void setCategoryId(int id) {
+    categoryId = id;
+  }
+
+  void setExchangeSetting(
+      List<int> categorys, bool exchangeable, bool allCategories) {
+    preferredCategoryIds = categorys;
+    isExchangeable = exchangeable;
+    requireAllCategories = allCategories;
+  }
 
   void continueStep() {
     if (currentStep < 2) {
+      if (currentStep > 0) {
+        if (!_formKey.currentState!.validate()) {
+          return;
+        }
+      }
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           currentStep += 1;
         });
       });
+    } else {
+      context.read<ItemBloc>().add(AddItemEvent(
+          title: _titleController.text,
+          description: _descriptionController.text,
+          categoryId: categoryId!,
+          preferredCategoryIds: preferredCategoryIds ?? [],
+          isExchangeable: isExchangeable,
+          requireAllCategories: requireAllCategories,
+          address: _addressController.text));
     }
   }
 
@@ -37,6 +78,8 @@ class _AddItemState extends State<AddItem> {
 
   @override
   Widget build(BuildContext context) {
+    List<CategorySelectedModel> categorys =
+        context.read<ItemBloc>().categorys;
     return CustomScaffoldWithoutScroll(
       extendBodyBehindAppBar: false,
       appBar: AppBar(
@@ -44,53 +87,68 @@ class _AddItemState extends State<AddItem> {
       ),
       child: Stack(
         children: [
-          Stepper(
-            elevation: 0,
-            currentStep: currentStep,
-            controller: ScrollController(initialScrollOffset: 0, keepScrollOffset: false),
-            type: StepperType.horizontal,
-            controlsBuilder: (context, details) {
-              return const SizedBox();
-            },
-            steps: [
-              Step(
-                isActive: currentStep >= 0,
-                state: currentStep > 0 ? StepState.complete : StepState.indexed,
-                title: const Text(
-                  "ขั้นตอนที่ 1",
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
+          Form(
+            key: _formKey,
+            child: Stepper(
+              elevation: 0,
+              currentStep: currentStep,
+              controller: ScrollController(
+                  initialScrollOffset: 0, keepScrollOffset: false),
+              type: StepperType.horizontal,
+              controlsBuilder: (context, details) {
+                return const SizedBox();
+              },
+              steps: [
+                Step(
+                  isActive: currentStep >= 0,
+                  state:
+                      currentStep > 0 ? StepState.complete : StepState.indexed,
+                  title: const Text(
+                    "ขั้นตอนที่ 1",
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  content: const AddItemStepOne(),
+                ),
+                Step(
+                  isActive: currentStep >= 1,
+                  state:
+                      currentStep > 1 ? StepState.complete : StepState.indexed,
+                  title: const Text(
+                    "ขั้นตอนที่ 2",
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  content: AddItemStepTwo(
+                    categoryType: categorys,
+                    addressController: _addressController,
+                    descriptionController: _descriptionController,
+                    titleController: _titleController,
+                    setCategoryId: setCategoryId,
                   ),
                 ),
-                content: const AddItemStepOne(),
-              ),
-              Step(
-                isActive: currentStep >= 1,
-                state: currentStep > 1 ? StepState.complete : StepState.indexed,
-                title: const Text(
-                  "ขั้นตอนที่ 2",
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
+                Step(
+                  isActive: currentStep >= 2,
+                  state:
+                      currentStep > 2 ? StepState.complete : StepState.indexed,
+                  title: const Text(
+                    "ขั้นตอนที่ 3",
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  content: AddItemStepThree(
+                    categorysRequire: categorys,
+                    setExchangeSetting: setExchangeSetting,
                   ),
                 ),
-                content: const AddItemStepTwo(),
-              ),
-              Step(
-                isActive: currentStep >= 2,
-                state:
-                    currentStep > 2 ? StepState.complete : StepState.indexed,
-                title: const Text(
-                  "ขั้นตอนที่ 3",
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                content: const AddItemStepThree(),
-              ),
-            ],
+              ],
+            ),
           ),
           StepController(
             currentStep: currentStep,
@@ -133,10 +191,26 @@ class StepController extends StatelessWidget {
               buttonText: currentStep <= 0 ? "" : "ย้อนกลับ",
               buttonColor: Theme.of(context).primaryColorLight,
             ),
-            CustomTextbuttonStepper(
-              submit: onStepContinue,
-              buttonText: currentStep >= 2 ? "เสร็จสิ้น" : "ถัดไป",
-              buttonColor: Theme.of(context).primaryColor,
+            BlocBuilder<ItemBloc, ItemState>(
+              builder: (context, state) {
+                if (state is AdditemLoading) {
+                  return const CircularProgressIndicator();
+                }
+
+                if (state is AdditemSuccess) {
+                  pageRouteNotReturn(context, const FirstAddItemSuccess());
+                }
+
+                if (state is AdditemFailure) {
+                  AlertMessage.alert("แจ้งเตือน", state.message, context);
+                }
+
+                return CustomTextbuttonStepper(
+                  submit: onStepContinue,
+                  buttonText: currentStep >= 2 ? "เสร็จสิ้น" : "ถัดไป",
+                  buttonColor: Theme.of(context).primaryColor,
+                );
+              },
             ),
           ],
         ),

@@ -19,6 +19,14 @@ final class CategorySuccess extends CategoryState {
   CategorySuccess(this.categorys);
 }
 
+final class CategorySubmitLoading extends CategoryState {}
+
 final class CategorySubmitSuccess extends CategorySuccess {
   CategorySubmitSuccess(super.categorys);
+}
+
+final class CategorySubmitFailure extends CategoryState {
+  final String message;
+
+  CategorySubmitFailure(this.message);
 }

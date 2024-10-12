@@ -28,24 +28,44 @@ class LogoutEvent extends AuthEvent {}
 
 class RegisterEvent extends AuthEvent {
   final String email;
-  final String name;
   final String password;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       "email": email,
-      "name": name,
       "password": password,
     };
   }
 
-  RegisterEvent(this.email, this.name, this.password);
+  RegisterEvent(this.email, this.password);
 
   @override
-  List<Object> get props => [email, name, password];
+  List<Object> get props => [email, password];
 }
 
 class UpdateProfileImageEvent extends AuthEvent {}
+
+class GetMeEvent extends AuthEvent {}
+
+class UpdateProfileEvent extends AuthEvent {
+  final String username;
+  final String phone;
+  final String address;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      "name": username,
+      "phone": phone,
+      "address": address,
+    };
+  }
+
+  UpdateProfileEvent({
+    required this.username,
+    required this.phone,
+    required this.address,
+  });
+}
 
 class ResetPasswordEvent extends AuthEvent {
   final String email;

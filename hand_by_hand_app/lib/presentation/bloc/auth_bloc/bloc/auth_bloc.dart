@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hand_by_hand_app/data/models/auth/auth_model.dart';
+import 'package:hand_by_hand_app/data/models/user/user_model.dart';
 import 'package:hand_by_hand_app/domain/repositories/auth_repository.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -11,6 +13,9 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
   final ImagePicker picker = ImagePicker();
+  File? profileImage;
+
+  late UserGetMe me;
 
   AuthBloc({required this.authRepository}) : super(AuthInitial()) {
     on<LoginEvent>(_handleLoginEvent);
@@ -20,11 +25,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<InitEvent>(_handleInitialEvent);
     on<LogoutEvent>(_handleLogoutEvent);
     on<UpdateProfileImageEvent>(_handleUpdateProfileImageEvent);
+    on<UpdateProfileEvent>(_handleUpdateProfileEvent);
+    on<GetMeEvent>(_handleGetMeEvent);
   }
 
   Future<void> _handleInitialEvent(
       InitEvent event, Emitter<AuthState> emit) async {
     emit(AuthInitial());
+  }
+
+  Future<void> _handleGetMeEvent(
+      GetMeEvent event, Emitter<AuthState> emit) async {
+    emit(GetMeLoading());
+    final result = await authRepository.getMe();
+
+    result.fold((failure) => emit(GetMeFailure(failure)), (success) {
+      me = success;
+      emit(GetMeSuccess(getMe: success));
+    });
   }
 
   Future<void> _handleUpdateProfileImageEvent(
@@ -36,6 +54,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     emit(AuthUpdateProfileImageLoading());
+    profileImage = File(image.path);
     emit(AuthUpdateProfileImageSuccess(image: File(image.path)));
   }
 
@@ -60,7 +79,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } else {
         emit(AuthFailure(failure));
       }
-    }, (success) => emit(AuthFirstLogin()));
+    }, (success) {
+      emit(AuthLoginSuccess(success));
+    });
   }
 
   Future<void> _handleRegisterEvent(
@@ -88,5 +109,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     result.fold((failure) => emit(AuthFailure(failure)),
         (success) => emit(AuthResentVerifySuccess(success)));
+  }
+
+  Future<void> _handleUpdateProfileEvent(
+      UpdateProfileEvent event, Emitter<AuthState> emit) async {
+    emit(AuthUpdateProfileLoading());
+    final result = await authRepository.updateMe(event, profileImage);
+    result.fold((failure) => emit(AuthUpdateProfileFailure(failure)),
+        (success) => emit(AuthUpdateProfileSuccess()));
   }
 }

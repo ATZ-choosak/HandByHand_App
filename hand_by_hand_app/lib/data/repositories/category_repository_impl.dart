@@ -30,4 +30,23 @@ class CategoryRepositoryImpl extends CategoryRepository {
       return Left(message);
     }
   }
+
+  @override
+  Future<Either> categoryInteresting(CategoryInterestingInput categorys) async {
+    try {
+      final response = await dioClient.dio
+          .post(ApiEndpoints.categoryInteresting, data: categorys.toJson());
+
+      if (response.statusCode == 200) {
+        final message = response.data["message"] ?? "สำเร็จ";
+        return Right(message);
+      } else {
+        final message = response.data["message"] ?? "ไม่สำเร็จ";
+        return Left(message);
+      }
+    } on DioException catch (e) {
+      final message = e.response?.data["message"] ?? "ไม่สำเร็จ";
+      return Left(message);
+    }
+  }
 }

@@ -1,0 +1,82 @@
+import 'dart:io';
+
+import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
+import 'package:hand_by_hand_app/data/models/item/item_model.dart';
+import 'package:hand_by_hand_app/data/source/api_endpoints.dart';
+import 'package:hand_by_hand_app/data/source/dio_client.dart';
+import 'package:hand_by_hand_app/domain/repositories/item_repository.dart';
+import 'package:hand_by_hand_app/module/get_location.dart';
+import 'package:hand_by_hand_app/presentation/bloc/item_bloc/bloc/item_bloc.dart';
+
+class ItemRepositoryImpl extends ItemRepository {
+  final DioClient dioClient;
+
+  ItemRepositoryImpl({required this.dioClient});
+
+  @override
+  Future<Either> addItem(AddItemEvent addItemReq, List<File> images) async {
+    try {
+      FormData itemData;
+      LocationModel location = await getCurrentLocation();
+
+      if (images.isNotEmpty) {
+        List<MultipartFile> allImages = [];
+
+        for (File f in images) {
+          allImages.add(await MultipartFile.fromFile(f.path));
+        }
+
+        itemData = FormData.fromMap({
+          ...addItemReq.toMap(),
+          "images": allImages,
+          "lon": location.lon,
+          "lat": location.lat
+        });
+      } else {
+        itemData = FormData.fromMap(
+            {...addItemReq.toMap(), "lon": location.lon, "lat": location.lat});
+      }
+
+      final response =
+          await dioClient.dio.post(ApiEndpoints.item, data: itemData);
+
+
+      if (response.statusCode == 200) {
+        final message = response.data["message"] ?? "สำเร็จ";
+        return Right(message);
+      } else {
+        final message = response.data["message"] ?? "ไม่สำเร็จ";
+        return Left(message);
+      }
+    } on DioException catch (e) {
+      final message = e.response?.data["message"] ?? "ไม่สำเร็จ";
+
+
+      return Left(message);
+    }
+  }
+
+  @override
+  Future<Either<String, GetAllItemModel>> getItem(
+      GetItemEvent getItemReq) async {
+    try {
+      final response = await dioClient.dio
+          .get(ApiEndpoints.item, queryParameters: getItemReq.toMap());
+
+
+      if (response.statusCode == 200) {
+        final dynamic data = response.data;
+        final allItems = GetAllItemModel.fromJson(data);
+
+        return Right(allItems);
+      } else {
+        final message = response.data["message"] ?? "ไม่สำเร็จ";
+        return Left(message);
+      }
+    } on DioException catch (e) {
+      final message = e.response?.data["message"] ?? "ไม่สำเร็จ";
+      return Left(message);
+    }
+  }
+}

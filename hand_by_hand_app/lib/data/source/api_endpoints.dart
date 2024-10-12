@@ -11,7 +11,12 @@ class ApiEndpoints {
   static String resetPassword = "$baseUrl/auth/password-reset/request";
   static String resentVerifyEmail = "$baseUrl/auth/resend-verification";
   static String getMe = "$baseUrl/users/me";
+  static String updateMe = "$baseUrl/users/me";
 
   //category
   static String getCategories = "$baseUrl/categorys/categories";
+  static String categoryInteresting = "$baseUrl/customerInterest/customer-interest";
+
+  //item
+  static String item = "$baseUrl/items/";
 }

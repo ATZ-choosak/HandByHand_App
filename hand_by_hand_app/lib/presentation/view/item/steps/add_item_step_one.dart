@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
-import 'package:hand_by_hand_app/presentation/bloc/additem_bloc/bloc/additem_bloc.dart';
+import 'package:hand_by_hand_app/presentation/bloc/item_bloc/bloc/item_bloc.dart';
 import 'package:hand_by_hand_app/presentation/widgets/alert_message.dart';
 import 'package:hand_by_hand_app/presentation/widgets/show_image_full.dart';
 import 'package:hand_by_hand_app/module/page_route.dart';
@@ -36,7 +36,10 @@ class AddItemStepOne extends StatelessWidget {
         ),
         Column(
           children: [
-            BlocBuilder<AdditemBloc, AdditemState>(
+            BlocBuilder<ItemBloc, ItemState>(
+              buildWhen: (previous, current) {
+                return previous is AddImagesLoading;
+              },
               builder: (context, state) {
                 if (state is AddImagesFailure) {
                   AlertMessage.alert("แจ้งเตือน", state.message, context);
@@ -110,7 +113,7 @@ class ImageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 300,
+      height: 400,
       child: GridView.builder(
         itemCount: images.length,
         physics: const NeverScrollableScrollPhysics(),
@@ -143,7 +146,7 @@ class ImageItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void removeImage() {
-      context.read<AdditemBloc>().add(RemoveImageEvent(image: images[index]));
+      context.read<ItemBloc>().add(RemoveImageEvent(image: images[index]));
     }
 
     void openImage() {
@@ -230,7 +233,7 @@ class AddImageButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void addImages() {
-      context.read<AdditemBloc>().add(AddImageEvent());
+      context.read<ItemBloc>().add(AddImageEvent());
     }
 
     return InkWell(

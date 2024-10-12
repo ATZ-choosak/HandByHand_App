@@ -6,18 +6,21 @@ class CustomButton extends StatelessWidget {
       required this.submit,
       required this.buttonText,
       this.disabled = false,
-      this.icon});
+      this.icon,
+      this.width = 130,
+      this.height = 50});
 
   final Function submit;
   final String buttonText;
   final bool disabled;
   final Icon? icon;
+  final double? width, height;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 130,
-      height: 50,
+      width: width,
+      height: height,
       child: ElevatedButton(
         onPressed: () => disabled ? null : submit(),
         style: ElevatedButton.styleFrom(

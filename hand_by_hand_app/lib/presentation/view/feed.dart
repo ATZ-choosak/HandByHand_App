@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hand_by_hand_app/presentation/bloc/auth_bloc/bloc/auth_bloc.dart';
-import 'package:hand_by_hand_app/presentation/view/login_page.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:hand_by_hand_app/presentation/view/home_page.dart';
+import 'package:hand_by_hand_app/presentation/view/profile_page.dart';
+import 'package:hand_by_hand_app/presentation/widgets/custom_scaffold_without_scroll.dart';
 
 class Feed extends StatefulWidget {
   const Feed({super.key});
@@ -11,24 +12,59 @@ class Feed extends StatefulWidget {
 }
 
 class _FeedState extends State<Feed> {
+  int _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
-    void logout() async {
-      context.read<AuthBloc>().add(LogoutEvent());
-      if (context.mounted) {
-        await Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const LoginPage(),
+    return CustomScaffoldWithoutScroll(
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, 3), // changes position of shadow
+              ),
+            ],
           ),
-          (Route<dynamic> route) => false,
-        );
-      }
-    }
-
-    return Scaffold(
-        body: Center(
-      child: ElevatedButton(onPressed: logout, child: const Text("Logout")),
-    ));
+          child: GNav(
+            //rippleColor: Theme.of(context).primaryColor,
+            //hoverColor: Theme.of(context).primaryColor,
+            tabBackgroundColor: Colors.white,
+            backgroundColor: Colors.white,
+            activeColor: Theme.of(context).primaryColor,
+            color: Theme.of(context).primaryColorDark,
+            onTabChange: (value) {
+              setState(() {
+                _selectedIndex = value;
+              });
+            },
+            tabs: const [
+              GButton(
+                icon: Icons.home,
+                text: "หน้าหลัก",
+              ),
+              GButton(
+                icon: Icons.list_alt,
+                text: "รายการ",
+              ),
+              GButton(
+                icon: Icons.person,
+                text: "โปรไฟล์",
+              )
+            ],
+          ),
+        ),
+        child: SafeArea(
+            top: false,
+            child: IndexedStack(
+              index: _selectedIndex,
+              children: const [
+                HomePage(),
+                Text("2"),
+                ProfilePage(),
+              ],
+            )));
   }
 }

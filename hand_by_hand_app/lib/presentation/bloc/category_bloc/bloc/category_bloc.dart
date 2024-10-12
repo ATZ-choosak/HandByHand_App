@@ -41,11 +41,19 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 
   Future<void> _handleCategorySubmitEvent(
       CategorySubmitEvent event, Emitter<CategoryState> emit) async {
+
+    CategoryInterestingInput categorysList = CategoryInterestingInput();
+
     for (var element in categorys) {
       if (element.selected) {
-        print("${element.title} : ${element.id}");
+        categorysList.addtoList(element.id);
       }
     }
+
+    final result = await categoryRepository.categoryInteresting(categorysList);
+
+    result.fold((failure) => emit(CategorySubmitFailure(failure)),
+        (success) => emit(CategorySubmitSuccess(categorys)));
 
     emit(CategorySubmitSuccess(categorys));
   }

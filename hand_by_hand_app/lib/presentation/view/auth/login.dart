@@ -2,6 +2,7 @@
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:hand_by_hand_app/module/page_route_not_return.dart';
 import 'package:hand_by_hand_app/presentation/bloc/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/presentation/widgets/alert_message.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_button.dart';
@@ -174,40 +175,21 @@ class LoginButton extends CustomButton {
                     ),
                   );
                 }
-                        
+
                 if (state is AuthLoginSuccess) {
-                  WidgetsBinding.instance
-                      .addPostFrameCallback((_) async {
-                    await Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const Feed(),
-                      ),
-                      (Route<dynamic> route) => false,
-                    );
-                  });
+                  if (state.auth.isFirstLogin) {
+                    pageRouteNotReturn(context, const Feed());
+                  } else {
+                    pageRouteNotReturn(context, FirstProfileSetting());
+                  }
                 }
-                        
+
                 if (state is AuthFailure) {
                   AlertMessage.alert("แจ้งเตือน", state.error, context);
                 }
-                        
-                if (state is AuthFirstLogin) {
-                  WidgetsBinding.instance
-                      .addPostFrameCallback((_) async {
-                    await Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => FirstProfileSetting(),
-                      ),
-                      (Route<dynamic> route) => false,
-                    );
-                  });
-                }
-                        
+
                 if (state is AuthEmailNotVerify) {
-                  WidgetsBinding.instance
-                      .addPostFrameCallback((_) async {
+                  WidgetsBinding.instance.addPostFrameCallback((_) async {
                     await Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
@@ -217,7 +199,7 @@ class LoginButton extends CustomButton {
                     );
                   });
                 }
-                        
+
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,

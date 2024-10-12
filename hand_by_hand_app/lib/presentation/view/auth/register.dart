@@ -35,8 +35,6 @@ class RegisterForm extends StatelessWidget {
 
   final TextEditingController _emailController = TextEditingController();
 
-  final TextEditingController _nameController = TextEditingController();
-
   final TextEditingController _passwordController = TextEditingController();
 
   @override
@@ -47,7 +45,7 @@ class RegisterForm extends StatelessWidget {
       } else {
         _formKey.currentState!.save();
         context.read<AuthBloc>().add(RegisterEvent(_emailController.text,
-            _nameController.text, _passwordController.text));
+         _passwordController.text));
       }
     }
 
@@ -63,10 +61,6 @@ class RegisterForm extends StatelessWidget {
             ),
             const SizedBox(
               height: 30,
-            ),
-            NameInput(nameController: _nameController),
-            const SizedBox(
-              height: 10,
             ),
             EmailInput(emailController: _emailController),
             const SizedBox(

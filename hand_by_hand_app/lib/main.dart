@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hand_by_hand_app/presentation/bloc/additem_bloc/bloc/additem_bloc.dart';
-import 'package:hand_by_hand_app/data/source/token_service.dart';
+import 'package:hand_by_hand_app/module/page_route_not_return.dart';
+import 'package:hand_by_hand_app/presentation/bloc/item_bloc/bloc/item_bloc.dart';
 import 'package:hand_by_hand_app/presentation/bloc/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/presentation/bloc/category_bloc/bloc/category_bloc.dart';
-import 'package:hand_by_hand_app/mockup/category/category_mockup.dart';
+import 'package:hand_by_hand_app/presentation/view/feed.dart';
 import 'package:hand_by_hand_app/presentation/view/onboarding/onboarding.dart';
 import 'package:hand_by_hand_app/presentation/view/survey/first_profile_setting.dart';
 import 'package:hand_by_hand_app/service_locator.dart.dart';
@@ -28,14 +28,14 @@ class MainApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => getIt<AuthBloc>(),
+          create: (context) => getIt<AuthBloc>()..add(GetMeEvent()),
         ),
         BlocProvider(
-          create: (context) => getIt<CategoryBloc>(),
+          create: (context) =>
+              getIt<CategoryBloc>()..add(CategoryLoadingEvent()),
         ),
         BlocProvider(
-          create: (context) => AdditemBloc(
-              CategoryMockup().getCategory(), CategoryMockup().getCategory()),
+          create: (context) => getIt<ItemBloc>()..add(ItemInitalEvent()),
         )
       ],
       child: MaterialApp(
@@ -56,23 +56,35 @@ class MainApp extends StatelessWidget {
             Theme.of(context).textTheme,
           ),
         ),
-        home: Scaffold(
-          body: Center(
-              child: FutureBuilder(
-            future: TokenService.getAccessToken(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isNotEmpty) {
-                  return FirstProfileSetting();
-                } else {
-                  return const CircularProgressIndicator();
-                }
+        home: Scaffold(body: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+
+            print(state);
+
+            if (state is GetMeLoading) {
+              
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            if (state is GetMeSuccess) {
+              if (state.getMe.isFirstLogin) {
+                pageRouteNotReturn(context, const Feed());
               } else {
-                return const Onboarding();
+                pageRouteNotReturn(context, FirstProfileSetting());
               }
-            },
-          )),
-        ),
+            }
+
+            if (state is GetMeFailure) {
+              pageRouteNotReturn(context, const Onboarding());
+            }
+
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        )),
       ),
     );
   }

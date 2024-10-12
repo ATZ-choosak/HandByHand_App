@@ -2,10 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hand_by_hand_app/data/repositories/auth_repository_impl.dart';
 import 'package:hand_by_hand_app/data/repositories/category_repository_impl.dart';
+import 'package:hand_by_hand_app/data/repositories/item_repository_impl.dart';
 import 'package:hand_by_hand_app/data/source/dio_client.dart';
+import 'package:hand_by_hand_app/data/source/location_service.dart';
 import 'package:hand_by_hand_app/data/source/token_service.dart';
 import 'package:hand_by_hand_app/domain/repositories/auth_repository.dart';
 import 'package:hand_by_hand_app/domain/repositories/category_repository.dart';
+import 'package:hand_by_hand_app/domain/repositories/item_repository.dart';
+import 'package:hand_by_hand_app/presentation/bloc/item_bloc/bloc/item_bloc.dart';
 import 'package:hand_by_hand_app/presentation/bloc/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/presentation/bloc/category_bloc/bloc/category_bloc.dart';
 
@@ -36,4 +40,16 @@ void setupLocator() {
   //Register CategoryBloc
   getIt.registerFactory<CategoryBloc>(
       () => CategoryBloc(categoryRepository: getIt<CategoryRepository>()));
+
+  //Register ItemRepository implementation
+  getIt.registerLazySingleton<ItemRepository>(
+      () => ItemRepositoryImpl(dioClient: getIt<DioClient>()));
+
+  //register ItemBloc
+  getIt.registerFactory<ItemBloc>(() => ItemBloc(
+      categoryRepository: getIt<CategoryRepository>(),
+      itemRepository: getIt<ItemRepository>()));
+
+  //Register LocationService as a singleton
+  getIt.registerLazySingleton(() => LocationService());
 }

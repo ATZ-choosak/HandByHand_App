@@ -4,10 +4,11 @@ class CustomScaffold extends StatelessWidget {
   const CustomScaffold({
     super.key,
     required this.child,
-    this.appBar,
+    this.appBar, this.bottomNavigationBar,
   });
 
   final Widget child;
+  final Widget? bottomNavigationBar;
   final AppBar? appBar;
 
   @override
@@ -16,6 +17,7 @@ class CustomScaffold extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
+      bottomNavigationBar: bottomNavigationBar,
       appBar: appBar,
       body: SingleChildScrollView(
         child: child,

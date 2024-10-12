@@ -10,8 +10,8 @@ class DioClient {
   DioClient(this._dio) {
     _dio.options = BaseOptions(
       baseUrl: ApiEndpoints.baseUrl,
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
+      connectTimeout: const Duration(seconds: 5),
+      receiveTimeout: const Duration(seconds: 5),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -24,10 +24,17 @@ class DioClient {
         }
         return handler.next(options);
       },
-      onResponse: (response, handler) {
+      onResponse: (response, handler) async {
+        if (response.statusCode == 401) {
+          await TokenService.deleteAccessToken();
+        }
+
         return handler.next(response);
       },
-      onError: (error, handler) {
+      onError: (error, handler) async {
+        if (error.response?.statusCode == 401) {
+          await TokenService.deleteAccessToken();
+        }
         return handler.next(error);
       },
     ));
