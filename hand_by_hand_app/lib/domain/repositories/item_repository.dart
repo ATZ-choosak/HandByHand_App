@@ -8,4 +8,6 @@ abstract class ItemRepository {
   Future<Either> addItem(AddItemEvent addItemReq, List<File> images);
 
   Future<Either<String, GetAllItemModel>> getItem(GetItemEvent getItemReq);
+
+  Future<Either> updateItem(UpdateItemEvent updateItemReq, List<File> images);
 }

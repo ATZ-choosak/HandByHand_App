@@ -168,9 +168,9 @@ class CategoryCard extends StatelessWidget {
                     borderRadius: BorderRadius.all(
                   Radius.circular(4),
                 )),
-                child: categorys[index].image.url.isNotEmpty
+                child: categorys[index].image != null
                     ? Image.network(
-                        imagePath(categorys[index].image.url),
+                        imagePath(categorys[index].image!.url),
                         width: double.infinity,
                         height: double.infinity,
                         fit: BoxFit.cover,

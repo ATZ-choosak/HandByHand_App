@@ -1,68 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand_app/data/models/category/category_model.dart';
+import 'package:hand_by_hand_app/data/models/item/item_model.dart';
 import 'package:hand_by_hand_app/module/page_route_not_return.dart';
 import 'package:hand_by_hand_app/presentation/bloc/item_bloc/bloc/item_bloc.dart';
 import 'package:hand_by_hand_app/presentation/view/feed.dart';
+import 'package:hand_by_hand_app/presentation/view/item/add_item_steps%20copy/update_item_step_one.dart';
+import 'package:hand_by_hand_app/presentation/view/item/add_item_steps%20copy/update_item_step_three.dart';
+import 'package:hand_by_hand_app/presentation/view/item/add_item_steps%20copy/update_item_step_two.dart';
 import 'package:hand_by_hand_app/presentation/widgets/alert_message.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_scaffold_without_scroll.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_textbutton_stepper.dart';
-import 'package:hand_by_hand_app/presentation/view/item/add_item_steps/add_item_step_one.dart';
-import 'package:hand_by_hand_app/presentation/view/item/add_item_steps/add_item_step_three.dart';
-import 'package:hand_by_hand_app/presentation/view/item/add_item_steps/add_item_step_two.dart';
 
-class AddItem extends StatefulWidget {
-  const AddItem({super.key});
+class UpdateItem extends StatefulWidget {
+  final Item item;
+
+  const UpdateItem({
+    super.key,
+    required this.item,
+  });
 
   @override
-  State<AddItem> createState() => _ItemState();
+  State<UpdateItem> createState() => _ItemState();
 }
 
-class _ItemState extends State<AddItem> {
+class _ItemState extends State<UpdateItem> {
   int currentStep = 0;
-  final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
+  // Moved formKey to the class level
+  final formKey = GlobalKey<FormState>();
+
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
   int? categoryId;
   List<int>? preferredCategoryIds;
   bool isExchangeable = false;
   bool requireAllCategories = false;
-  final TextEditingController _addressController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize controllers and state variables here
+    titleController = TextEditingController(text: widget.item.title);
+    descriptionController =
+        TextEditingController(text: widget.item.description);
+    addressController = TextEditingController(text: widget.item.address);
+
+    categoryId = widget.item.category.id;
+    preferredCategoryIds = widget.item.preferredCategoryIds;
+    isExchangeable = widget.item.isExchangeable;
+    requireAllCategories = widget.item.requireAllCategories;
+  }
+
+  @override
+  void dispose() {
+    // Clean up controllers when the widget is disposed
+    titleController.dispose();
+    descriptionController.dispose();
+    addressController.dispose();
+    super.dispose();
+  }
 
   void setCategoryId(int id) {
-    categoryId = id;
+    setState(() {
+      categoryId = id;
+    });
   }
 
   void setExchangeSetting(
       List<int> categorys, bool exchangeable, bool allCategories) {
-    preferredCategoryIds = categorys;
-    isExchangeable = exchangeable;
-    requireAllCategories = allCategories;
+    setState(() {
+      preferredCategoryIds = categorys;
+      isExchangeable = exchangeable;
+      requireAllCategories = allCategories;
+    });
   }
 
   void continueStep() {
     if (currentStep < 2) {
       if (currentStep > 0) {
-        if (!_formKey.currentState!.validate()) {
+        // Validate form before moving to the next step
+        if (!formKey.currentState!.validate()) {
           return;
         }
       }
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          currentStep += 1;
-        });
+      setState(() {
+        currentStep += 1;
       });
     } else {
-      context.read<ItemBloc>().add(AddItemEvent(
-          title: _titleController.text,
-          description: _descriptionController.text,
+      context.read<ItemBloc>().add(UpdateItemEvent(
+          title: titleController.text,
+          description: descriptionController.text,
           categoryId: categoryId!,
           preferredCategoryIds: preferredCategoryIds ?? [],
           isExchangeable: isExchangeable,
           requireAllCategories: requireAllCategories,
-          address: _addressController.text));
+          address: addressController.text,
+          id: widget.item.id));
     }
   }
 
@@ -79,7 +116,7 @@ class _ItemState extends State<AddItem> {
   @override
   Widget build(BuildContext context) {
     List<CategorySelectedModel> categorys = context.read<ItemBloc>().categorys;
-    context.read<ItemBloc>().add(ItemInitalEvent());
+
     return CustomScaffoldWithoutScroll(
       extendBodyBehindAppBar: false,
       appBar: AppBar(
@@ -88,7 +125,7 @@ class _ItemState extends State<AddItem> {
       child: Stack(
         children: [
           Form(
-            key: _formKey,
+            key: formKey, // Use the formKey declared at class level
             child: Stepper(
               elevation: 0,
               currentStep: currentStep,
@@ -110,7 +147,7 @@ class _ItemState extends State<AddItem> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  content: const AddItemStepOne(),
+                  content: const UpdateItemStepOne(),
                 ),
                 Step(
                   isActive: currentStep >= 1,
@@ -123,11 +160,12 @@ class _ItemState extends State<AddItem> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  content: AddItemStepTwo(
+                  content: UpdateItemStepTwo(
+                    categoryId: categoryId,
                     categoryType: categorys,
-                    addressController: _addressController,
-                    descriptionController: _descriptionController,
-                    titleController: _titleController,
+                    addressController: addressController,
+                    descriptionController: descriptionController,
+                    titleController: titleController,
                     setCategoryId: setCategoryId,
                   ),
                 ),
@@ -142,9 +180,12 @@ class _ItemState extends State<AddItem> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  content: AddItemStepThree(
+                  content: UpdateItemStepThree(
                     categorysRequire: categorys,
                     setExchangeSetting: setExchangeSetting,
+                    categoryRequires: preferredCategoryIds ?? [],
+                    isExchange: isExchangeable,
+                    isRequireAll: requireAllCategories,
                   ),
                 ),
               ],

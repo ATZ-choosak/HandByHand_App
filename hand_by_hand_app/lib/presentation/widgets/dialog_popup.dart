@@ -12,7 +12,9 @@ class DialogPopup {
                 content: content,
                 actions: [
                   TextButton(
-                    onPressed: () => confirm,
+                    onPressed: () {
+                      confirm();
+                    },
                     child: Text(
                       "ตกลง",
                       style: TextStyle(

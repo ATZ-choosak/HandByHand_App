@@ -63,3 +63,37 @@ class AddItemEvent extends ItemEventBase {
       required this.requireAllCategories,
       required this.address});
 }
+
+class UpdateItemEvent extends ItemEventBase {
+  final int id;
+  final String title;
+  final String description;
+  final int categoryId;
+  final List<int> preferredCategoryIds;
+  final bool isExchangeable;
+  final bool requireAllCategories;
+  final String address;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      "title": title,
+      "description": description,
+      "category_id": categoryId,
+      "preferred_category_ids":
+          preferredCategoryIds.isNotEmpty ? preferredCategoryIds.join(',') : "",
+      "is_exchangeable": isExchangeable,
+      "require_all_categories": requireAllCategories,
+      "address": address,
+    };
+  }
+
+  UpdateItemEvent(
+      {required this.id,
+      required this.title,
+      required this.description,
+      required this.categoryId,
+      required this.preferredCategoryIds,
+      required this.isExchangeable,
+      required this.requireAllCategories,
+      required this.address});
+}

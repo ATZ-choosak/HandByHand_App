@@ -11,21 +11,25 @@ class UserGetMe {
   final bool isFirstLogin;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final int postCount, exchangeCompleteCount;
+  final double rating;
 
-  UserGetMe({
-    required this.email,
-    required this.phone,
-    required this.address,
-    required this.lon,
-    required this.lat,
-    required this.profileImage,
-    required this.id,
-    required this.name,
-    required this.isVerified,
-    required this.isFirstLogin,
-    required this.createdAt,
-    required this.updatedAt,
-  });
+  UserGetMe(
+      {required this.email,
+      required this.phone,
+      required this.address,
+      required this.lon,
+      required this.lat,
+      required this.profileImage,
+      required this.id,
+      required this.name,
+      required this.isVerified,
+      required this.isFirstLogin,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.postCount,
+      required this.exchangeCompleteCount,
+      required this.rating});
 
   // Factory method to create a UserGetMe instance from JSON
   factory UserGetMe.fromJson(Map<String, dynamic> json) {
@@ -44,6 +48,9 @@ class UserGetMe {
       isFirstLogin: json['is_first_login'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
+      postCount: json['post_count'],
+      exchangeCompleteCount: json['exchange_complete_count'],
+      rating: json['rating'],
     );
   }
 }

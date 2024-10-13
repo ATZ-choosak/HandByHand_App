@@ -113,7 +113,7 @@ class ForgotPassword extends StatelessWidget {
                                       "แจ้งเตือน", state.message, context);
                                 }
 
-                                if (state is AuthFailure) {
+                                if (state is AuthResetPasswordFailure) {
                                   AlertMessage.alert(
                                       "แจ้งเตือน", state.error, context);
                                 }

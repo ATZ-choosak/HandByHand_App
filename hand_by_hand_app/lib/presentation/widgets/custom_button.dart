@@ -8,11 +8,12 @@ class CustomButton extends StatelessWidget {
       this.disabled = false,
       this.icon,
       this.width = 130,
-      this.height = 50});
+      this.height = 50,
+      this.useIcon = true});
 
   final Function submit;
   final String buttonText;
-  final bool disabled;
+  final bool disabled, useIcon;
   final Icon? icon;
   final double? width, height;
 
@@ -31,13 +32,15 @@ class CustomButton extends StatelessWidget {
             foregroundColor: Colors.white),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: useIcon ? MainAxisAlignment.spaceAround : MainAxisAlignment.center,
           children: [
             Text(buttonText),
-            SizedBox(
-                height: 20,
-                width: 20,
-                child: icon ?? const Icon(Icons.arrow_forward)),
+            useIcon
+                ? SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: icon ?? const Icon(Icons.arrow_forward))
+                : const SizedBox(),
           ],
         ),
       ),

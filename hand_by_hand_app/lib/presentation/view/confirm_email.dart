@@ -103,6 +103,10 @@ class ConfirmEmail extends StatelessWidget {
                       AlertMessage.alert("แจ้งเตือน", state.message, context);
                     }
 
+                    if (state is AuthResendVerifyFailure) {
+                      AlertMessage.alert("แจ้งเตือน", state.error, context);
+                    }
+
                     return TextButton(
                         onPressed: () {
                           resendEmail();

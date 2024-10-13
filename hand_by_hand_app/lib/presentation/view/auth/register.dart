@@ -157,8 +157,9 @@ class CreateAccountButton extends StatelessWidget {
                     );
                   }
 
-                  if (state is AuthFailure) {
+                  if (state is AUthRegisterFailure) {
                     AlertMessage.alert("แจ้งเตือน", state.error, context);
+                    context.read<AuthBloc>().add(InitEvent());
                   }
 
                   return const Row(

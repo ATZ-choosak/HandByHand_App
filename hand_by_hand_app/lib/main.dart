@@ -6,14 +6,17 @@ import 'package:hand_by_hand_app/module/page_route_not_return.dart';
 import 'package:hand_by_hand_app/presentation/bloc/item_bloc/bloc/item_bloc.dart';
 import 'package:hand_by_hand_app/presentation/bloc/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/presentation/bloc/category_bloc/bloc/category_bloc.dart';
+import 'package:hand_by_hand_app/presentation/bloc/my_item_bloc/bloc/my_item_bloc.dart';
 import 'package:hand_by_hand_app/presentation/view/feed.dart';
 import 'package:hand_by_hand_app/presentation/view/onboarding/onboarding.dart';
 import 'package:hand_by_hand_app/presentation/view/survey/first_profile_setting.dart';
 import 'package:hand_by_hand_app/service_locator.dart.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
+  await initializeDateFormatting('th_TH', null);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MainApp());
@@ -35,7 +38,11 @@ class MainApp extends StatelessWidget {
               getIt<CategoryBloc>()..add(CategoryLoadingEvent()),
         ),
         BlocProvider(
-          create: (context) => getIt<ItemBloc>()..add(ItemInitalEvent()),
+          create: (context) => getIt<ItemBloc>()
+            ..add(ItemInitalEvent()),
+        ),
+        BlocProvider(
+          create: (context) => getIt<MyItemBloc>()..add(GetMyItemEvent()),
         )
       ],
       child: MaterialApp(
@@ -58,11 +65,9 @@ class MainApp extends StatelessWidget {
         ),
         home: Scaffold(body: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
-
             print(state);
 
             if (state is GetMeLoading) {
-              
               return const Center(
                 child: CircularProgressIndicator(),
               );

@@ -46,8 +46,12 @@ class _FeedState extends State<Feed> {
                 text: "หน้าหลัก",
               ),
               GButton(
-                icon: Icons.list_alt,
-                text: "รายการ",
+                icon: Icons.upload_rounded,
+                text: "รายการที่ร้องขอ",
+              ),
+              GButton(
+                icon: Icons.download_rounded,
+                text: "รายการที่ถูกขอ",
               ),
               GButton(
                 icon: Icons.person,
@@ -60,11 +64,7 @@ class _FeedState extends State<Feed> {
             top: false,
             child: IndexedStack(
               index: _selectedIndex,
-              children: const [
-                HomePage(),
-                Text("2"),
-                ProfilePage(),
-              ],
+              children: const [HomePage(), Text("2"), Text("3"), ProfilePage()],
             )));
   }
 }

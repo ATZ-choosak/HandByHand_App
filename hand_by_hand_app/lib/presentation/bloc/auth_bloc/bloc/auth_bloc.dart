@@ -77,7 +77,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (failure == "EMAIL_NOT_VERIFY") {
         emit(AuthEmailNotVerify(event.username));
       } else {
-        emit(AuthFailure(failure));
+        emit(AuthLoginFailure(failure));
       }
     }, (success) {
       emit(AuthLoginSuccess(success));
@@ -89,7 +89,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     final result = await authRepository.register(event);
 
-    result.fold((failure) => emit(AuthFailure(failure)),
+    result.fold((failure) => emit(AUthRegisterFailure(failure)),
         (success) => emit(AuthRegisterSuccess(success, event.email)));
   }
 
@@ -98,7 +98,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     final result = await authRepository.resetPassword(event);
 
-    result.fold((failure) => emit(AuthFailure(failure)),
+    result.fold((failure) => emit(AuthResetPasswordFailure(failure)),
         (success) => emit(AuthResetPasswordSuccess(success)));
   }
 
@@ -107,7 +107,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     final result = await authRepository.resendVerifyEmail(event);
 
-    result.fold((failure) => emit(AuthFailure(failure)),
+    result.fold((failure) => emit(AuthResendVerifyFailure(failure)),
         (success) => emit(AuthResentVerifySuccess(success)));
   }
 

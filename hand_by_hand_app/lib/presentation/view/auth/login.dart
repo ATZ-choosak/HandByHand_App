@@ -184,8 +184,9 @@ class LoginButton extends CustomButton {
                   }
                 }
 
-                if (state is AuthFailure) {
+                if (state is AuthLoginFailure) {
                   AlertMessage.alert("แจ้งเตือน", state.error, context);
+                  context.read<AuthBloc>().add(InitEvent());
                 }
 
                 if (state is AuthEmailNotVerify) {

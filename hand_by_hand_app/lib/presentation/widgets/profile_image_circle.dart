@@ -26,7 +26,7 @@ class ProfileImageCircle extends StatelessWidget {
         : AvatarNoImage(
             radius: radius,
             username: name,
-            fontSize: 14,
+            fontSize: radius,
           );
   }
 }

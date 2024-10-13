@@ -56,6 +56,23 @@ class AuthFailure extends AuthState {
   List<Object?> get props => [error];
 }
 
+class AuthLoginFailure extends AuthFailure {
+  AuthLoginFailure(super.error);
+}
+
+class AUthRegisterFailure extends AuthFailure {
+  AUthRegisterFailure(super.error);
+}
+
+class AuthResetPasswordFailure extends AuthFailure {
+  AuthResetPasswordFailure(super.error);
+}
+
+class AuthResendVerifyFailure extends AuthFailure {
+  AuthResendVerifyFailure(super.error);
+
+}
+
 class AuthEmailNotVerify extends AuthState {
   final String email;
   AuthEmailNotVerify(this.email);

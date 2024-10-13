@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hand_by_hand_app/presentation/view/item/add_item_suggest.dart';
 import 'package:hand_by_hand_app/presentation/widgets/circle_top.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_button.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_scaffold_without_scroll.dart';
@@ -7,7 +8,6 @@ import 'package:hand_by_hand_app/presentation/widgets/custom_textbutton.dart';
 import 'package:hand_by_hand_app/module/page_route.dart';
 import 'package:hand_by_hand_app/module/page_route_not_return.dart';
 import 'package:hand_by_hand_app/presentation/view/feed.dart';
-import 'package:hand_by_hand_app/presentation/view/item/add_item.dart';
 
 class FirstAddItem extends StatelessWidget {
   const FirstAddItem({super.key});
@@ -55,7 +55,7 @@ class FirstAddItem extends StatelessWidget {
                 ),
                 CustomButton(
                   submit: () {
-                    pageRoute(context, const AddItem());
+                    pageRoute(context, const AddItemSuggest());
                   },
                   buttonText: "เพิ่มเลย",
                   icon: const Icon(Icons.add),

@@ -127,7 +127,7 @@ class Owner {
   factory Owner.fromJson(Map<String, dynamic> json) {
     return Owner(
       id: json['id'],
-      name: json['name'],
+      name: json['name'] ?? "",
       phone: json['phone'],
       profileImage: json['profile_image'] != null
           ? ProfileImage.fromJson(json['profile_image'])
@@ -138,15 +138,39 @@ class Owner {
 
 class GetAllItemModel {
   final List<Item> items;
+  final int totalItems, page, itemsPerPage, totalPages;
 
-  GetAllItemModel({required this.items});
-
+  GetAllItemModel(
+      {required this.items,
+      required this.totalItems,
+      required this.page,
+      required this.itemsPerPage,
+      required this.totalPages});
   // Factory method to create GetAllItemModel instance from JSON with snake_case keys
   factory GetAllItemModel.fromJson(Map<String, dynamic> json) {
     return GetAllItemModel(
       items: List<Item>.from(
         json['items'].map((itemJson) => Item.fromJson(itemJson)),
       ),
+      totalItems: json['total_items'],
+      page: json['page'],
+      itemsPerPage: json['items_per_page'],
+      totalPages: json['total_pages'],
     );
+  }
+}
+
+class GetAllMyItemModel {
+  final List<Item> items;
+
+  GetAllMyItemModel({
+    required this.items,
+  });
+
+  factory GetAllMyItemModel.fromJson(List json) {
+    return GetAllMyItemModel(
+        items: List<Item>.from(
+      json.map((itemJson) => Item.fromJson(itemJson)),
+    ));
   }
 }

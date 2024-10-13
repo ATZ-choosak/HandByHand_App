@@ -3,16 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand_app/data/models/user/user_model.dart';
 import 'package:hand_by_hand_app/module/page_route.dart';
 import 'package:hand_by_hand_app/presentation/bloc/auth_bloc/bloc/auth_bloc.dart';
-import 'package:hand_by_hand_app/presentation/bloc/my_item_bloc/bloc/my_item_bloc.dart';
 import 'package:hand_by_hand_app/presentation/view/account_setting.dart';
 import 'package:hand_by_hand_app/presentation/view/profile_setting.dart';
 import 'package:hand_by_hand_app/presentation/widgets/alert_message.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_button.dart';
-import 'package:hand_by_hand_app/presentation/widgets/my_item_card.dart';
 import 'package:hand_by_hand_app/presentation/widgets/profile_image_circle.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({
+class ProfilePageAnother extends StatelessWidget {
+  const ProfilePageAnother({
     super.key,
   });
 
@@ -36,13 +34,7 @@ class ProfilePage extends StatelessWidget {
           AlertMessage.alert("แจ้งเตือน", state.message, context);
         }
 
-        return Center(
-          child: TextButton(
-              onPressed: () {
-                context.read<AuthBloc>().add(GetMeEvent());
-              },
-              child: const Text("โหลดอีกครั้ง")),
-        );
+        return const CircularProgressIndicator();
       },
     );
   }
@@ -63,36 +55,26 @@ class Profile extends StatelessWidget {
   Widget build(BuildContext context) {
     final double top = coverHeight - profileHeight / 2;
 
-    return SingleChildScrollView(
-      child: Column(
+    return SizedBox(
+      height: double.maxFinite,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
         children: [
-          SizedBox(
-            height: 450,
-            child: Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
-              children: [
-                Positioned(
-                  top: 0,
-                  width: MediaQuery.of(context).size.width,
-                  child: BackgroundCover(
-                    coverHeight: coverHeight,
-                  ),
-                ),
-                Positioned(
-                    top: top,
-                    width: MediaQuery.of(context).size.width,
-                    child: ProfileDetail(
-                      user: user,
-                      profileHeight: profileHeight / 2,
-                    )),
-              ],
+          Positioned(
+            top: 0,
+            width: MediaQuery.of(context).size.width,
+            child: BackgroundCover(
+              coverHeight: coverHeight,
             ),
           ),
-          const SizedBox(
-            height: 50,
-          ),
-          const MyItemList()
+          Positioned(
+              top: top,
+              width: MediaQuery.of(context).size.width,
+              child: ProfileDetail(
+                user: user,
+                profileHeight: profileHeight / 2,
+              )),
         ],
       ),
     );
@@ -157,24 +139,18 @@ class ProfileDetail extends StatelessWidget {
         const SizedBox(
           height: 20,
         ),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            PostLabel(
-              postCount: user.postCount,
-            ),
-            const SizedBox(
+            PostLabel(),
+            SizedBox(
               width: 50,
             ),
-            CompleteLabel(
-              completeCount: user.exchangeCompleteCount,
-            ),
-            const SizedBox(
+            CompleteLabel(),
+            SizedBox(
               width: 50,
             ),
-            ReviewLabel(
-              reviewCount: user.rating,
-            )
+            ReviewLabel()
           ],
         ),
         const SizedBox(
@@ -184,45 +160,6 @@ class ProfileDetail extends StatelessWidget {
           me: user,
         ),
       ],
-    );
-  }
-}
-
-class MyItemList extends StatelessWidget {
-  const MyItemList({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    BlocProvider.of<MyItemBloc>(context).add(GetMyItemEvent());
-
-    return BlocBuilder<MyItemBloc, MyItemState>(
-      builder: (context, state) {
-        if (state is GetMyItemLoading) {
-          return const CircularProgressIndicator();
-        }
-
-        if (state is GetMyItemSuccess) {
-          return Container(
-            color: Colors.grey[100],
-            child: ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: state.item.items.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return MyItemCard(item: state.item.items[index]);
-              },
-            ),
-          );
-        }
-
-        return TextButton(
-            onPressed: () {
-              context.read<MyItemBloc>().add(GetMyItemEvent());
-            },
-            child: const Text("โหลดใหม่อีกครั้ง"));
-      },
     );
   }
 }
@@ -287,17 +224,14 @@ class Separate extends StatelessWidget {
 class ReviewLabel extends StatelessWidget {
   const ReviewLabel({
     super.key,
-    required this.reviewCount,
   });
-
-  final double reviewCount;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Text(
-          reviewCount.toString(),
+          "4.5",
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -313,17 +247,14 @@ class ReviewLabel extends StatelessWidget {
 class CompleteLabel extends StatelessWidget {
   const CompleteLabel({
     super.key,
-    required this.completeCount,
   });
-
-  final int completeCount;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Text(
-          completeCount.toString(),
+          "3",
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -339,17 +270,14 @@ class CompleteLabel extends StatelessWidget {
 class PostLabel extends StatelessWidget {
   const PostLabel({
     super.key,
-    required this.postCount,
   });
-
-  final int postCount;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Text(
-          postCount.toString(),
+          "12",
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,

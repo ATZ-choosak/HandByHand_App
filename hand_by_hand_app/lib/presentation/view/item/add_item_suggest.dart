@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand_app/data/models/category/category_model.dart';
 import 'package:hand_by_hand_app/module/page_route_not_return.dart';
 import 'package:hand_by_hand_app/presentation/bloc/item_bloc/bloc/item_bloc.dart';
-import 'package:hand_by_hand_app/presentation/view/feed.dart';
+import 'package:hand_by_hand_app/presentation/view/survey/first_add_item_success.dart';
 import 'package:hand_by_hand_app/presentation/widgets/alert_message.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_scaffold_without_scroll.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_textbutton_stepper.dart';
@@ -11,14 +11,14 @@ import 'package:hand_by_hand_app/presentation/view/item/add_item_steps/add_item_
 import 'package:hand_by_hand_app/presentation/view/item/add_item_steps/add_item_step_three.dart';
 import 'package:hand_by_hand_app/presentation/view/item/add_item_steps/add_item_step_two.dart';
 
-class AddItem extends StatefulWidget {
-  const AddItem({super.key});
+class AddItemSuggest extends StatefulWidget {
+  const AddItemSuggest({super.key});
 
   @override
-  State<AddItem> createState() => _ItemState();
+  State<AddItemSuggest> createState() => _ItemState();
 }
 
-class _ItemState extends State<AddItem> {
+class _ItemState extends State<AddItemSuggest> {
   int currentStep = 0;
   final _formKey = GlobalKey<FormState>();
 
@@ -79,7 +79,6 @@ class _ItemState extends State<AddItem> {
   @override
   Widget build(BuildContext context) {
     List<CategorySelectedModel> categorys = context.read<ItemBloc>().categorys;
-    context.read<ItemBloc>().add(ItemInitalEvent());
     return CustomScaffoldWithoutScroll(
       extendBodyBehindAppBar: false,
       appBar: AppBar(
@@ -198,7 +197,7 @@ class StepController extends StatelessWidget {
                 }
 
                 if (state is AdditemSuccess) {
-                  pageRouteNotReturn(context, const Feed());
+                  pageRouteNotReturn(context, const FirstAddItemSuccess());
                 }
 
                 if (state is AdditemFailure) {

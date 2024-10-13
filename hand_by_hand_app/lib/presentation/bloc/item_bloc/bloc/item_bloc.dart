@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -21,13 +23,12 @@ class ItemBloc extends Bloc<ItemEventBase, ItemState> {
 
   List<File> images = [];
 
-  GetAllItemModel items = GetAllItemModel(items: []);
-
   ItemBloc({required this.itemRepository, required this.categoryRepository})
       : super(AdditemInitial()) {
     on<AddImageEvent>(_handleAddImagesEvent);
     on<RemoveImageEvent>(_handleRemoveImagesEvent);
     on<AddItemEvent>(_handleAddItemEvent);
+    on<UpdateItemEvent>(_handleUpdateItemEvent);
     on<ItemInitalEvent>(_handleItemInitalEvent);
     on<GetItemEvent>(_handleGetItemEvent);
   }
@@ -54,6 +55,17 @@ class ItemBloc extends Bloc<ItemEventBase, ItemState> {
       AddItemEvent event, Emitter<ItemState> emit) async {
     emit(AdditemLoading());
     final result = await itemRepository.addItem(event, images);
+
+    result.fold((failure) => emit(AdditemFailure(failure)), (success) {
+      emit(AdditemSuccess(success));
+      images = [];
+    });
+  }
+
+  Future<void> _handleUpdateItemEvent(
+      UpdateItemEvent event, Emitter<ItemState> emit) async {
+    emit(AdditemLoading());
+    final result = await itemRepository.updateItem(event, images);
 
     result.fold((failure) => emit(AdditemFailure(failure)),
         (success) => emit(AdditemSuccess(success)));
@@ -92,7 +104,8 @@ class ItemBloc extends Bloc<ItemEventBase, ItemState> {
 
     final result = await itemRepository.getItem(event);
 
-    result.fold((failure) => emit(GetItemFailure(failure)),
-        (success) => emit(GetItemSuccess(allItems: success)));
+    result.fold((failure) => emit(GetItemFailure(failure)), (success) {
+      emit(GetItemSuccess(allItems: success));
+    });
   }
 }

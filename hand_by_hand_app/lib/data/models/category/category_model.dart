@@ -3,14 +3,14 @@ import 'dart:convert';
 class CategoryModel {
   final int id;
   final String title;
-  final CategoryImage image;
+  final CategoryImage? image;
 
   CategoryModel({required this.title, required this.image, required this.id});
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     return CategoryModel(
       title: json['name'],
-      image: json['image'].map((category) => CategoryImage.fromJson(category)),
+      image: json['image']?.map((category) => CategoryImage.fromJson(category)),
       id: json['id'],
     );
   }
@@ -52,7 +52,8 @@ class CategorySelectedModel extends CategoryModel {
   factory CategorySelectedModel.fromJson(Map<String, dynamic> json) {
     return CategorySelectedModel(
       title: json['name'],
-      image: CategoryImage.fromJson(json['image']),
+      image:
+          json['image'] != null ? CategoryImage.fromJson(json['image']) : null,
       id: json['id'],
       selected: false,
     );

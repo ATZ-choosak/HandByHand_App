@@ -3,15 +3,18 @@ import 'package:get_it/get_it.dart';
 import 'package:hand_by_hand_app/data/repositories/auth_repository_impl.dart';
 import 'package:hand_by_hand_app/data/repositories/category_repository_impl.dart';
 import 'package:hand_by_hand_app/data/repositories/item_repository_impl.dart';
+import 'package:hand_by_hand_app/data/repositories/my_item_repository_impl.dart';
 import 'package:hand_by_hand_app/data/source/dio_client.dart';
 import 'package:hand_by_hand_app/data/source/location_service.dart';
 import 'package:hand_by_hand_app/data/source/token_service.dart';
 import 'package:hand_by_hand_app/domain/repositories/auth_repository.dart';
 import 'package:hand_by_hand_app/domain/repositories/category_repository.dart';
 import 'package:hand_by_hand_app/domain/repositories/item_repository.dart';
+import 'package:hand_by_hand_app/domain/repositories/my_item_repository.dart';
 import 'package:hand_by_hand_app/presentation/bloc/item_bloc/bloc/item_bloc.dart';
 import 'package:hand_by_hand_app/presentation/bloc/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/presentation/bloc/category_bloc/bloc/category_bloc.dart';
+import 'package:hand_by_hand_app/presentation/bloc/my_item_bloc/bloc/my_item_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -49,6 +52,14 @@ void setupLocator() {
   getIt.registerFactory<ItemBloc>(() => ItemBloc(
       categoryRepository: getIt<CategoryRepository>(),
       itemRepository: getIt<ItemRepository>()));
+
+  //Register MyItemRepository implementation
+  getIt.registerLazySingleton<MyItemRepository>(
+      () => MyItemRepositoryImpl(dioClient: getIt<DioClient>()));
+
+  //register MyItemBloc
+  getIt.registerFactory<MyItemBloc>(
+      () => MyItemBloc(myItemRepository: getIt<MyItemRepository>()));
 
   //Register LocationService as a singleton
   getIt.registerLazySingleton(() => LocationService());

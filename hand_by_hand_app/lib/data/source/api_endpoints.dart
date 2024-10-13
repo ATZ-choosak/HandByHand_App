@@ -19,4 +19,14 @@ class ApiEndpoints {
 
   //item
   static String item = "$baseUrl/items/";
+  static String myItem = "$baseUrl/items/my-items";
+
+  static String updateItem(int id){
+    return "$baseUrl/items/items/$id";
+  }
+
+  static String deleteItem(int id) {
+    return "$baseUrl/items/$id";
+  }
+
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
@@ -26,7 +28,7 @@ class AuthRepositoryImpl extends AuthRepository {
         final dynamic auth = response.data;
         AuthModel authModel = AuthModel.fromJson(auth);
         await TokenService.saveAccessToken(authModel.accressToken);
-        
+
         return Right(authModel);
       } else {
         return const Left("เข้าสู่ระบบไม่สำเร็จ");
@@ -73,8 +75,9 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<Either> resendVerifyEmail(ResentVerifyEvent resendVerifyReq) async {
     try {
-      final response = await dioClient.dio.post(ApiEndpoints.resentVerifyEmail,
-          queryParameters: resendVerifyReq.toMap());
+      final response = await dioClient.dio
+          .post(ApiEndpoints.resentVerifyEmail, data: resendVerifyReq.toMap());
+
       if (response.statusCode == 200) {
         final message = response.data["message"] ?? "ส่งลิงค์ไปยังอีเมลแล้ว";
         return Right(message);

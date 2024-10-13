@@ -30,6 +30,7 @@ dependencies:
   google_nav_bar: ^5.0.6
   readmore: ^3.0.0
   url_launcher: ^6.3.0
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
@@ -42,3 +43,4 @@ flutter:
   assets:
     - images/
     - images/category/
+    - symbols/

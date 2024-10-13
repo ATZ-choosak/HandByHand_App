@@ -60,3 +60,4 @@ final class GetItemSuccess extends ItemState {
 
   GetItemSuccess({required this.allItems});
 }
+

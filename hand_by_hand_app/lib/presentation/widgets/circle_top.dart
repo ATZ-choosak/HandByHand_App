@@ -8,8 +8,7 @@ class CircleTop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: -380,
-      left: -100,
+      top: -350,
       child: Container(
         width: 560,
         height: 560,
