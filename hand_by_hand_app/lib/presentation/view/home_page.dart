@@ -50,101 +50,123 @@ class _HomePageState extends State<HomePage> {
     GetAllItemModel allItem = GetAllItemModel(
         items: [], totalItems: 0, page: page, itemsPerPage: 0, totalPages: 0);
 
+    void refreshPage() {
+      page = 1;
+      allItem.items.clear();
+      context.read<ItemBloc>().add(GetItemEvent(page: page, itemPerPage: 10));
+    }
+
     return CustomScaffoldWithoutScroll(
-        appBar: AppBar(
-          title: const Text("Hand by Hand"),
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Colors.white,
-          actions: [
-            IconButton(
-                onPressed: () {
-                  pageRoute(context, const SearchPage());
-                },
-                icon: const Icon(Icons.search)),
-            IconButton(
-                onPressed: () {
-                  pageRoute(context, const AddItem());
-                },
-                icon: const Icon(Icons.add))
-          ],
-        ),
-        backgroundColor: Colors.grey[100],
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            BlocBuilder<ItemBloc, ItemState>(
-              builder: (context, state) {
-                print(state);
+      appBar: AppBar(
+        title: const Text("Hand by Hand"),
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: () {
+              pageRoute(context, const SearchPage());
+            },
+            icon: const Icon(Icons.search),
+          ),
+          IconButton(
+            onPressed: () {
+              pageRoute(context, const AddItem());
+            },
+            icon: const Icon(Icons.add),
+          )
+        ],
+      ),
+      backgroundColor: Colors.grey[100],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BlocBuilder<ItemBloc, ItemState>(
+            builder: (context, state) {
+              print(state);
 
-                bool isLoading = false;
+              bool isLoading = false;
 
-                if (state is GetItemSuccess) {
-                  allItem.items.addAll(state.allItems.items);
-                  limit = state.allItems.totalPages;
-                  isLoading = false;
-                }
+              if (state is AdditemInitalSuccess) {
+                refreshPage();
+              }
 
-                if (state is GetItemLoading) {
-                  isLoading = true;
-                }
+              if (state is GetItemSuccess) {
+                allItem.items.addAll(state.allItems.items);
+                limit = state.allItems.totalPages;
+                isLoading = false;
+              }
 
-                if (state is GetItemFailure) {
-                  AlertMessage.alert("แจ้งเตือน", state.message, context);
-                  return Expanded(
-                    child: Center(
-                      child: TextButton(
-                          onPressed: () {
-                            context
-                                .read<ItemBloc>()
-                                .add(GetItemEvent(page: 1, itemPerPage: 10));
-                          },
-                          child: const Text("โหลดใหม่อีกครั้ง")),
-                    ),
-                  );
-                }
+              if (state is GetItemLoading) {
+                isLoading = true;
+              }
 
-                return Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () async {
-                      page = 1;
-                      allItem.items.clear();
-                      context
-                          .read<ItemBloc>()
-                          .add(GetItemEvent(page: page, itemPerPage: 10));
-                    },
-                    child: SingleChildScrollView(
-                      controller: scrollController,
-                      child: Column(
-                        children: [
-                          const AddItemPanel(),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount:
-                                  allItem.items.length + (isLoading ? 1 : 0),
-                              itemBuilder: (context, index) {
-                                if (index < allItem.items.length) {
-                                  return ItemCard(
-                                    item: allItem.items[index],
-                                  );
-                                } else {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                }
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+              if (state is GetItemFailure) {
+                AlertMessage.alert("แจ้งเตือน", state.message, context);
+                return Container(
+                  margin: const EdgeInsets.only(top: 100),
+                  child: Center(
+                    child: TextButton(
+                      onPressed: () {
+                        refreshPage();
+                      },
+                      child: const Text("โหลดใหม่อีกครั้ง"),
                     ),
                   ),
                 );
-              },
-            )
-          ],
-        ));
+              }
+
+              return Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    refreshPage();
+                  },
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Column(
+                      children: [
+                        const AddItemPanel(),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount:
+                                allItem.items.length + (isLoading ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index < allItem.items.length) {
+                                return ItemCard(
+                                  item: allItem.items[index],
+                                  refreshPage: refreshPage,
+                                );
+                              } else {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                        if (allItem.items.isEmpty && !isLoading)
+                          Center(
+                            child: TextButton(
+                              onPressed: () {
+                                refreshPage();
+                              },
+                              child: const Text("โหลดอีกครั้ง"),
+                            ),
+                          )
+                        else
+                          const SizedBox()
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -159,45 +181,6 @@ class AddItemPanel extends StatelessWidget {
       width: double.infinity,
       height: 0,
       color: Colors.red,
-    );
-  }
-}
-
-class ExchangeDetail extends StatelessWidget {
-  const ExchangeDetail({
-    super.key,
-    required this.item,
-  });
-
-  final Item item;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("ชื่อ : ${item.title}"),
-          Text("เจ้าของ : ${item.owner.name}"),
-          Text("ประเภท : ${item.category.name}"),
-          Text("ต้องการ : ${item.isExchangeable ? "แลกเปลี่ยน" : "บริจาค"}"),
-          const Text("ประเภทที่ต้องการ :"),
-          if (item.isExchangeable)
-            SizedBox(
-              width: double.maxFinite,
-              height: 300,
-              child: ListView.builder(
-                itemCount: item.preferredCategory.length,
-                itemBuilder: (context, index) {
-                  return Text(item.preferredCategory[index].name);
-                },
-              ),
-            )
-          else
-            const SizedBox()
-        ],
-      ),
     );
   }
 }

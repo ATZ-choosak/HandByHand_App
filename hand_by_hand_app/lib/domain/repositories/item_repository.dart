@@ -7,7 +7,9 @@ import 'package:hand_by_hand_app/presentation/bloc/item_bloc/bloc/item_bloc.dart
 abstract class ItemRepository {
   Future<Either> addItem(AddItemEvent addItemReq, List<File> images);
 
-  Future<Either<String, GetAllItemModel>> getItem(GetItemEvent getItemReq);
+  Future<Either<String, GetAllItemModel>> getItem(
+      GetItemEvent getItemReq, String? query);
+  Future<Either> getItemById(GetItemByIdEvent getItemReq);
 
   Future<Either> updateItem(UpdateItemEvent updateItemReq, List<File> images);
 }

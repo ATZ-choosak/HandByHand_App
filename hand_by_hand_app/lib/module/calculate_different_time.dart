@@ -7,7 +7,7 @@ String calculateDifferentTime(DateTime pastTime) {
   // Calculate the time difference
   Duration difference = now.difference(pastTime);
 
-  var thaiFormatter = DateFormat.yMMMMEEEEd('th_TH');
+  var thaiFormatter = DateFormat.yMEd('th_TH');
 
   // Display the appropriate time difference based on the value
   if (difference.inSeconds < 60) {

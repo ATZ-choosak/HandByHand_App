@@ -15,7 +15,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final ImagePicker picker = ImagePicker();
   File? profileImage;
 
-  late UserGetMe me;
+  UserGetMe me = UserGetMe(
+      email: "",
+      phone: "",
+      address: "",
+      lon: 0,
+      lat: 0,
+      profileImage: ProfileImage(id: "", url: ""),
+      id: 0,
+      name: "",
+      isVerified: false,
+      isFirstLogin: false,
+      createdAt: DateTime(2),
+      updatedAt: DateTime(2),
+      postCount: 0,
+      exchangeCompleteCount: 0,
+      rating: 0);
 
   AuthBloc({required this.authRepository}) : super(AuthInitial()) {
     on<LoginEvent>(_handleLoginEvent);

@@ -15,6 +15,14 @@ class GetItemEvent extends ItemEventBase {
   GetItemEvent({required this.page, required this.itemPerPage});
 }
 
+class GetItemByIdEvent extends ItemEventBase {
+
+  final int id;
+
+  GetItemByIdEvent({required this.id});
+
+}
+
 class SearchItemEvent extends ItemEventBase {
   final String query;
 

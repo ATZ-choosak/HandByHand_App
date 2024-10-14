@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:hand_by_hand_app/presentation/view/chat_page.dart';
 import 'package:hand_by_hand_app/presentation/view/home_page.dart';
+import 'package:hand_by_hand_app/presentation/view/in_coming.dart';
+import 'package:hand_by_hand_app/presentation/view/out_going.dart';
 import 'package:hand_by_hand_app/presentation/view/profile_page.dart';
 import 'package:hand_by_hand_app/presentation/widgets/custom_scaffold_without_scroll.dart';
 
@@ -28,43 +31,57 @@ class _FeedState extends State<Feed> {
               ),
             ],
           ),
-          child: GNav(
-            //rippleColor: Theme.of(context).primaryColor,
-            //hoverColor: Theme.of(context).primaryColor,
-            tabBackgroundColor: Colors.white,
-            backgroundColor: Colors.white,
-            activeColor: Theme.of(context).primaryColor,
-            color: Theme.of(context).primaryColorDark,
-            onTabChange: (value) {
-              setState(() {
-                _selectedIndex = value;
-              });
-            },
-            tabs: const [
-              GButton(
-                icon: Icons.home,
-                text: "หน้าหลัก",
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: GNav(
+                //rippleColor: Theme.of(context).primaryColor,
+                //hoverColor: Theme.of(context).primaryColor,
+
+                tabBackgroundColor: Colors.white,
+                backgroundColor: Colors.white,
+                activeColor: Theme.of(context).primaryColor,
+                color: Theme.of(context).primaryColorDark,
+                gap: 5,
+
+                onTabChange: (value) {
+                  setState(() {
+                    _selectedIndex = value;
+                  });
+                },
+                tabs: const [
+                  GButton(
+                    icon: Icons.home,
+                  ),
+                  GButton(
+                    icon: Icons.upload_rounded,
+                  ),
+                  GButton(
+                    icon: Icons.download_rounded,
+                  ),
+                  GButton(
+                    icon: Icons.chat,
+                  ),
+                  GButton(
+                    icon: Icons.person,
+                  )
+                ],
               ),
-              GButton(
-                icon: Icons.upload_rounded,
-                text: "รายการที่ร้องขอ",
-              ),
-              GButton(
-                icon: Icons.download_rounded,
-                text: "รายการที่ถูกขอ",
-              ),
-              GButton(
-                icon: Icons.person,
-                text: "โปรไฟล์",
-              )
-            ],
+            ),
           ),
         ),
         child: SafeArea(
             top: false,
             child: IndexedStack(
               index: _selectedIndex,
-              children: const [HomePage(), Text("2"), Text("3"), ProfilePage()],
+              children: const [
+                HomePage(),
+                OutGoing(),
+                InComing(),
+                ChatPage(),
+                ProfilePage()
+              ],
             )));
   }
 }

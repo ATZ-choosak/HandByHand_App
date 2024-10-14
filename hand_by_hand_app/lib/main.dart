@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hand_by_hand_app/module/page_route_not_return.dart';
+import 'package:hand_by_hand_app/presentation/bloc/chat_bloc/bloc/chat_bloc.dart';
+import 'package:hand_by_hand_app/presentation/bloc/exchange_bloc/bloc/exchange_bloc.dart';
 import 'package:hand_by_hand_app/presentation/bloc/item_bloc/bloc/item_bloc.dart';
 import 'package:hand_by_hand_app/presentation/bloc/auth_bloc/bloc/auth_bloc.dart';
 import 'package:hand_by_hand_app/presentation/bloc/category_bloc/bloc/category_bloc.dart';
@@ -38,11 +40,16 @@ class MainApp extends StatelessWidget {
               getIt<CategoryBloc>()..add(CategoryLoadingEvent()),
         ),
         BlocProvider(
-          create: (context) => getIt<ItemBloc>()
-            ..add(ItemInitalEvent()),
+          create: (context) => getIt<ItemBloc>()..add(ItemInitalEvent()),
         ),
         BlocProvider(
           create: (context) => getIt<MyItemBloc>()..add(GetMyItemEvent()),
+        ),
+        BlocProvider(
+          create: (context) => getIt<ExchangeBloc>(),
+        ),
+        BlocProvider(
+          create: (context) => getIt<ChatBloc>()..add(GetChatSessionsEvent()),
         )
       ],
       child: MaterialApp(

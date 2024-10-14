@@ -8,9 +8,9 @@ import 'package:hand_by_hand_app/module/calculate_distance.dart';
 import 'package:hand_by_hand_app/module/image_path.dart';
 import 'package:hand_by_hand_app/module/page_route.dart';
 import 'package:hand_by_hand_app/presentation/bloc/auth_bloc/bloc/auth_bloc.dart';
-import 'package:hand_by_hand_app/presentation/view/home_page.dart';
 import 'package:hand_by_hand_app/presentation/view/post_view.dart';
 import 'package:hand_by_hand_app/presentation/widgets/dialog_popup.dart';
+import 'package:hand_by_hand_app/presentation/widgets/exchage_detail.dart';
 import 'package:hand_by_hand_app/presentation/widgets/image_filter.dart';
 import 'package:hand_by_hand_app/presentation/widgets/profile_image_circle.dart';
 import 'package:readmore/readmore.dart';
@@ -20,9 +20,13 @@ class ItemCard extends StatelessWidget {
   const ItemCard({
     super.key,
     required this.item,
+    this.refreshPage,
+    this.onlyView = false,
   });
 
   final Item item;
+  final Function? refreshPage;
+  final bool? onlyView;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +47,7 @@ class ItemCard extends StatelessWidget {
           ExchangeDetail(
             item: item,
           ),
-          () {},
+          null,
           context);
     }
 
@@ -232,29 +236,36 @@ class ItemCard extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            Container(
-              width: double.infinity,
-              height: 0.7,
-              color: Colors.grey[200],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                me.id != item.owner.id
-                    ? TextButton.icon(
-                        onPressed: requireExchange,
-                        style: const ButtonStyle(
-                          iconSize: WidgetStatePropertyAll(20),
-                        ),
-                        label: const Text(
-                          "ต้องการสิ่งนี้",
-                          style: TextStyle(fontSize: 12),
-                        ),
-                        icon: const Icon(Icons.favorite_border_outlined),
-                      )
-                    : const SizedBox()
-              ],
-            )
+            !onlyView!
+                ? Column(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 0.7,
+                        color: Colors.grey[200],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          me.id != item.owner.id
+                              ? TextButton.icon(
+                                  onPressed: requireExchange,
+                                  style: const ButtonStyle(
+                                    iconSize: WidgetStatePropertyAll(20),
+                                  ),
+                                  label: const Text(
+                                    "ต้องการสิ่งนี้",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                  icon: const Icon(
+                                      Icons.favorite_border_outlined),
+                                )
+                              : const SizedBox()
+                        ],
+                      ),
+                    ],
+                  )
+                : const SizedBox()
           ],
         ),
       ),

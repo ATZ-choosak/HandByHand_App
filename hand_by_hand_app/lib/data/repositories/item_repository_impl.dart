@@ -57,10 +57,16 @@ class ItemRepositoryImpl extends ItemRepository {
 
   @override
   Future<Either<String, GetAllItemModel>> getItem(
-      GetItemEvent getItemReq) async {
+      GetItemEvent getItemReq, String? query) async {
     try {
-      final response = await dioClient.dio
-          .get(ApiEndpoints.item, queryParameters: getItemReq.toMap());
+      Map<String, dynamic> data = getItemReq.toMap();
+
+      if (query != null) {
+        data = {...getItemReq.toMap(), "query": query};
+      }
+
+      final response =
+          await dioClient.dio.get(ApiEndpoints.item, queryParameters: data);
 
       if (response.statusCode == 200) {
         final dynamic data = response.data;
@@ -121,6 +127,29 @@ class ItemRepositoryImpl extends ItemRepository {
     } on DioException catch (e) {
       final message = e.response?.data["message"] ?? "ไม่สำเร็จ";
 
+      return Left(message);
+    }
+  }
+
+  @override
+  Future<Either> getItemById(GetItemByIdEvent getItemReq) async {
+    try {
+      final response = await dioClient.dio.get(
+        ApiEndpoints.getItemById(getItemReq.id),
+      );
+
+      if (response.statusCode == 200) {
+        dynamic data = response.data;
+
+        Item item = Item.fromJson(data);
+
+        return Right(item);
+      } else {
+        final message = response.data["message"] ?? "ไม่สำเร็จ";
+        return Left(message);
+      }
+    } on DioException catch (e) {
+      final message = e.response?.data["message"] ?? "ไม่สำเร็จ";
       return Left(message);
     }
   }

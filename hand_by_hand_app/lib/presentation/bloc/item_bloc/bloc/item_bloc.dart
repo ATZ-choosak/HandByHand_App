@@ -31,6 +31,8 @@ class ItemBloc extends Bloc<ItemEventBase, ItemState> {
     on<UpdateItemEvent>(_handleUpdateItemEvent);
     on<ItemInitalEvent>(_handleItemInitalEvent);
     on<GetItemEvent>(_handleGetItemEvent);
+    on<GetItemByIdEvent>(_handleGetItemByIdEvent);
+    on<SearchItemEvent>(_handleSearchItemEvent);
   }
 
   Future<void> _handleItemInitalEvent(
@@ -102,10 +104,34 @@ class ItemBloc extends Bloc<ItemEventBase, ItemState> {
       GetItemEvent event, Emitter<ItemState> emit) async {
     emit(GetItemLoading());
 
-    final result = await itemRepository.getItem(event);
+    final result = await itemRepository.getItem(event, null);
 
     result.fold((failure) => emit(GetItemFailure(failure)), (success) {
       emit(GetItemSuccess(allItems: success));
+    });
+  }
+
+   Future<void> _handleGetItemByIdEvent(
+      GetItemByIdEvent event, Emitter<ItemState> emit) async {
+    emit(GetItemLoading());
+
+    final result = await itemRepository.getItemById(event);
+
+    result.fold((failure) => emit(GetItemFailure(failure)), (success) {
+      emit(GetItemByIdSuccess(item: success));
+    });
+  }
+
+  //SearchItem
+  Future<void> _handleSearchItemEvent(
+      SearchItemEvent event, Emitter<ItemState> emit) async {
+    emit(GetItemLoading());
+
+    final result = await itemRepository.getItem(
+        GetItemEvent(page: 1, itemPerPage: 10), event.query);
+
+    result.fold((failure) => emit(GetItemFailure(failure)), (success) {
+      emit(SearchItemSuccess(allItems: success));
     });
   }
 }

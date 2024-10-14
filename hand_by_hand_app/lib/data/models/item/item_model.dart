@@ -37,8 +37,8 @@ class Item {
   // Factory method to create an Item instance from JSON with snake_case keys
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
-      title: json['title'],
-      description: json['description'],
+      title: json['title'] ?? "",
+      description: json['description'] ?? "",
       preferredCategoryIds: List<int>.from(json['preferred_category_ids']),
       images: json['images'] != null
           ? List<ItemImage>.from(
@@ -52,9 +52,9 @@ class Item {
           ? List<PreferredCategory>.from(json['preferred_category']
               .map((category) => PreferredCategory.fromJson(category)))
           : [], // Category object
-      address: json['address'],
-      lon: json['lon'],
-      lat: json['lat'],
+      address: json['address'] ?? "",
+      lon: json['lon'] ?? 0,
+      lat: json['lat'] ?? 0,
       id: json['id'],
       owner: Owner.fromJson(json['owner']),
       createdAt: DateTime.parse(json['created_at']),
@@ -128,7 +128,7 @@ class Owner {
     return Owner(
       id: json['id'],
       name: json['name'] ?? "",
-      phone: json['phone'],
+      phone: json['phone'] ?? "",
       profileImage: json['profile_image'] != null
           ? ProfileImage.fromJson(json['profile_image'])
           : null,

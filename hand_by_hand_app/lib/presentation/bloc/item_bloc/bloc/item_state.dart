@@ -61,3 +61,14 @@ final class GetItemSuccess extends ItemState {
   GetItemSuccess({required this.allItems});
 }
 
+final class GetItemByIdSuccess extends ItemState {
+  final Item item;
+
+  GetItemByIdSuccess({required this.item});
+}
+
+final class SearchItemSuccess extends ItemState {
+  final GetAllItemModel allItems;
+
+  SearchItemSuccess({required this.allItems});
+}

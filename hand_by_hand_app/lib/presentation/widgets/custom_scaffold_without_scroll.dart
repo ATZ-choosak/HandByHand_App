@@ -7,18 +7,20 @@ class CustomScaffoldWithoutScroll extends StatelessWidget {
       this.appBar,
       this.extendBodyBehindAppBar = true,
       this.bottomNavigationBar,
-      this.backgroundColor = Colors.white});
+      this.backgroundColor = Colors.white,
+      this.resizeToAvoidBottomInset = false});
 
   final Widget child;
   final Widget? bottomNavigationBar;
   final AppBar? appBar;
   final Color? backgroundColor;
   final bool extendBodyBehindAppBar;
+  final bool resizeToAvoidBottomInset;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       bottomNavigationBar: bottomNavigationBar,
       extendBodyBehindAppBar: extendBodyBehindAppBar,
       backgroundColor: backgroundColor,
